@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_vendor_image_list" model="ir.ui.view">
+        <field name="name">otm.vendor.product.image.list</field>
+        <field name="model">otm.vendor.product.image</field>
+        <field name="arch" type="xml">
+            <list default_order="create_date desc">
+                <field name="image_128" widget="image" string="Preview" options="{'size': [64, 64]}"/>
+                <field name="name"/>
+                <field name="submission_id"/>
+                <field name="vendor_id"/>
+                <field name="batch_id" optional="hide"/>
+                <field name="duplicate_status" widget="badge"
+                       decoration-danger="duplicate_status == 'exact_duplicate'"
+                       decoration-warning="duplicate_status in ('possible_duplicate', 'similar')"
+                       decoration-success="duplicate_status in ('new', 'approved_duplicate')"/>
+                <field name="similarity_score" optional="show"/>
+                <field name="create_date" string="Upload Date" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_image_form" model="ir.ui.view">
+        <field name="name">otm.vendor.product.image.form</field>
+        <field name="model">otm.vendor.product.image</field>
+        <field name="arch" type="xml">
+            <form string="Product Image / Duplicate Review">
+                <header>
+                    <!-- Buttons are ALSO guarded server-side via
+                         _check_review_rights(); hiding them here is UX only. -->
+                    <button name="action_confirm_duplicate" type="object"
+                            string="Confirm Duplicate" class="btn-danger"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="duplicate_status not in ('exact_duplicate', 'possible_duplicate', 'similar')"/>
+                    <button name="action_not_duplicate" type="object"
+                            string="Not Duplicate" class="btn-success"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="duplicate_status not in ('exact_duplicate', 'possible_duplicate', 'similar')"/>
+                    <button name="action_keep_both" type="object"
+                            string="Keep Both"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="duplicate_status not in ('possible_duplicate', 'similar')"/>
+                    <button name="action_link_existing_product" type="object"
+                            string="Link to Existing Product"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="not duplicate_image_id"/>
+                    <field name="duplicate_status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="New Uploaded Image">
+                            <field name="image_512" widget="image" nolabel="1"/>
+                            <field name="name"/>
+                            <field name="vendor_id"/>
+                            <field name="submission_id"/>
+                            <field name="batch_id"/>
+                            <field name="create_date" string="Upload Date"/>
+                            <field name="view_type"/>
+                            <field name="is_main_image"/>
+                        </group>
+                        <group string="Existing Matching Image" invisible="not duplicate_image_id">
+                            <field name="duplicate_image_id"/>
+                            <field name="similarity_score"/>
+                            <field name="duplicate_vendor_id"/>
+                            <field name="duplicate_submission_id"/>
+                            <field name="duplicate_upload_date"/>
+                        </group>
+                    </group>
+                    <group string="Technical" groups="base.group_no_one">
+                        <field name="sha256_hash"/>
+                        <field name="perceptual_hash"/>
+                        <field name="process_state"/>
+                        <field name="process_error"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_image_kanban" model="ir.ui.view">
+        <field name="name">otm.vendor.product.image.kanban</field>
+        <field name="model">otm.vendor.product.image</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="duplicate_status"/>
+                <field name="similarity_score"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-column">
+                            <field name="image_256" widget="image" options="{'img_class': 'w-100'}"/>
+                            <field name="name" class="fw-bold"/>
+                            <field name="vendor_id"/>
+                            <field name="duplicate_status" widget="badge"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_image_search" model="ir.ui.view">
+        <field name="name">otm.vendor.product.image.search</field>
+        <field name="model">otm.vendor.product.image</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="submission_id"/>
+                <filter name="filter_exact" string="Exact Duplicates"
+                        domain="[('duplicate_status', '=', 'exact_duplicate')]"/>
+                <filter name="filter_possible" string="Possible Duplicates"
+                        domain="[('duplicate_status', 'in', ('possible_duplicate', 'similar'))]"/>
+                <filter name="filter_new" string="New"
+                        domain="[('duplicate_status', '=', 'new')]"/>
+                <filter name="filter_pending" string="Pending Analysis"
+                        domain="[('duplicate_status', '=', 'pending')]"/>
+                <group>
+                    <filter name="group_status" string="Duplicate Status"
+                            context="{'group_by': 'duplicate_status'}"/>
+                    <filter name="group_vendor" string="Vendor"
+                            context="{'group_by': 'vendor_id'}"/>
+                    <filter name="group_batch" string="Upload Batch"
+                            context="{'group_by': 'batch_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_image_exact_duplicates" model="ir.actions.act_window">
+        <field name="name">Exact Duplicates</field>
+        <field name="res_model">otm.vendor.product.image</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('duplicate_status', '=', 'exact_duplicate')]</field>
+    </record>
+
+    <record id="action_otm_vendor_image_possible_duplicates" model="ir.actions.act_window">
+        <field name="name">Possible Duplicates</field>
+        <field name="res_model">otm.vendor.product.image</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('duplicate_status', 'in', ('possible_duplicate', 'similar'))]</field>
+    </record>
+
+    <record id="action_otm_vendor_image_review" model="ir.actions.act_window">
+        <field name="name">Duplicate Review</field>
+        <field name="res_model">otm.vendor.product.image</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('duplicate_status', 'in', ('exact_duplicate', 'possible_duplicate', 'similar'))]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No duplicates awaiting review</p>
+            <p>Flagged images appear here with the matching existing image and a similarity score.</p>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_image_all" model="ir.actions.act_window">
+        <field name="name">All Product Images</field>
+        <field name="res_model">otm.vendor.product.image</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Purchase Manager mobile review interface                     -->
+    <!-- /purchase/product-review — server-side group check in the    -->
+    <!-- controller; this template is never the security boundary.    -->
+    <!-- ============================================================ -->
+    <template id="review_interface_page" name="Product Review Interface">
+        <t t-call="web.frontend_layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <div id="wrap" class="otm-review-app"
+                 data-data-url="/purchase/product-review/data"
+                 data-detail-url-tpl="/purchase/product-review/product/ID"
+                 data-duplicates-url="/purchase/product-review/duplicates"
+                 data-action-select-url="/purchase/product-review/action/select"
+                 data-action-reject-url="/purchase/product-review/action/reject"
+                 data-action-changes-url="/purchase/product-review/action/request-changes"
+                 data-action-review-url="/purchase/product-review/action/start-review"
+                 data-action-dupreview-url="/purchase/product-review/action/duplicate-review"
+                 data-duplicate-decision-url-tpl="/purchase/product-review/duplicate/IMAGE_ID/DECISION">
+
+                <!-- Top bar -->
+                <header class="otm-review-topbar d-flex align-items-center gap-2 px-2">
+                    <a href="/odoo" class="btn btn-sm btn-outline-light" title="Back to Odoo">&#8962;</a>
+                    <strong class="flex-grow-1 text-truncate">Product Review</strong>
+                    <button type="button" id="otm_view_toggle"
+                            class="btn btn-sm btn-outline-light" title="Toggle grid/list">
+                        &#9638;
+                    </button>
+                    <button type="button" id="otm_filter_open"
+                            class="btn btn-sm btn-light">Filters</button>
+                </header>
+
+                <!-- Status tabs -->
+                <nav class="otm-review-tabs d-flex flex-nowrap overflow-auto gap-2 px-2 py-2">
+                    <button type="button" class="btn btn-sm btn-primary otm-tab"
+                            data-state="submitted">
+                        New <span class="badge text-bg-light"
+                                  t-out="counts.get('submitted', 0)"/>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary otm-tab"
+                            data-state="under_review">
+                        Under Review <span class="badge text-bg-light"
+                                           t-out="counts.get('under_review', 0)"/>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary otm-tab"
+                            data-state="duplicate_review">
+                        Dup. Review <span class="badge text-bg-light"
+                                          t-out="counts.get('duplicate_review', 0)"/>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success otm-tab"
+                            data-state="selected">
+                        Selected <span class="badge text-bg-light"
+                                       t-out="counts.get('selected', 0)"/>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger otm-tab"
+                            data-state="rejected">
+                        Rejected <span class="badge text-bg-light"
+                                       t-out="counts.get('rejected', 0)"/>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning otm-tab"
+                            data-state="__duplicates__">
+                        Duplicate Images <span class="badge text-bg-light"
+                                               t-out="counts.get('duplicate_pending', 0)"/>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary otm-tab"
+                            data-state="all">All</button>
+                </nav>
+
+                <!-- Product grid (filled by JS) -->
+                <main id="otm_review_grid" class="otm-review-grid px-2 pb-5"></main>
+                <div id="otm_review_loading" class="text-center py-4 d-none">
+                    <div class="spinner-border" role="status"></div>
+                    <div class="small text-muted mt-1">Loading products...</div>
+                </div>
+                <div id="otm_review_empty" class="text-center text-muted py-5 d-none">
+                    No products match the current filters.
+                </div>
+                <div class="text-center pb-5 mb-5">
+                    <button type="button" id="otm_load_more"
+                            class="btn btn-outline-primary d-none">Load more</button>
+                </div>
+
+                <!-- Sticky bulk action bar -->
+                <div id="otm_bulk_bar" class="otm-bulk-bar d-none">
+                    <div class="d-flex align-items-center gap-2 px-2 py-2">
+                        <span class="fw-semibold flex-grow-1">
+                            <span id="otm_bulk_count">0</span> selected
+                        </span>
+                        <button type="button" id="otm_bulk_all"
+                                class="btn btn-sm btn-outline-secondary">Select All</button>
+                        <button type="button" id="otm_bulk_select"
+                                class="btn btn-sm btn-success">Approve</button>
+                        <button type="button" id="otm_bulk_reject"
+                                class="btn btn-sm btn-danger">Reject</button>
+                        <button type="button" id="otm_bulk_clear"
+                                class="btn btn-sm btn-outline-secondary">&#215;</button>
+                    </div>
+                </div>
+
+                <!-- Filter drawer -->
+                <div id="otm_filter_drawer" class="otm-drawer">
+                    <div class="otm-drawer-panel">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0">Filters</h5>
+                            <button type="button" id="otm_filter_close"
+                                    class="btn btn-sm btn-outline-secondary">&#215;</button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Search</label>
+                            <input type="text" id="otm_f_search" class="form-control"
+                                   placeholder="Name, SKU or vendor"/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Vendor</label>
+                            <select id="otm_f_vendor" class="form-select">
+                                <option value="">All Vendors</option>
+                                <t t-foreach="vendors" t-as="v">
+                                    <option t-att-value="v.id" t-out="v.display_name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Category (includes subcategories)</label>
+                            <select id="otm_f_category" class="form-select">
+                                <option value="">All Categories</option>
+                                <t t-foreach="categories" t-as="c">
+                                    <option t-att-value="c.id" t-out="c.complete_name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label">Price Min</label>
+                                <input type="number" id="otm_f_pmin" class="form-control"
+                                       min="0" step="1"/>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Price Max</label>
+                                <input type="number" id="otm_f_pmax" class="form-control"
+                                       min="0" step="1"/>
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" id="otm_f_dup" class="form-check-input"/>
+                            <label class="form-check-label" for="otm_f_dup">
+                                Only products with duplicate images
+                            </label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" id="otm_filter_apply"
+                                    class="btn btn-primary">Apply Filters</button>
+                            <button type="button" id="otm_filter_reset"
+                                    class="btn btn-outline-secondary">Reset Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product detail sheet (filled by JS) -->
+                <div id="otm_detail_sheet" class="otm-sheet">
+                    <div class="otm-sheet-panel">
+                        <div class="otm-sheet-handle"></div>
+                        <div id="otm_detail_body"></div>
+                    </div>
+                </div>
+
+                <!-- Selection confirmation modal -->
+                <div id="otm_select_modal" class="otm-modal">
+                    <div class="otm-modal-panel">
+                        <h5>Select Product<span id="otm_sel_multi"></span></h5>
+                        <div class="mb-2">
+                            <label class="form-label">Selected Quantity</label>
+                            <input type="number" id="otm_sel_qty" class="form-control"
+                                   min="0" step="1" inputmode="numeric"/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Negotiated Price</label>
+                            <input type="number" id="otm_sel_price" class="form-control"
+                                   min="0" step="0.01" inputmode="decimal"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Selection Note</label>
+                            <textarea id="otm_sel_notes" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" id="otm_sel_confirm"
+                                    class="btn btn-success btn-lg">CONFIRM SELECTION</button>
+                            <button type="button" class="btn btn-outline-secondary otm-modal-cancel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reject / request-changes modal -->
+                <div id="otm_reason_modal" class="otm-modal">
+                    <div class="otm-modal-panel">
+                        <h5 id="otm_reason_title">Reject Product</h5>
+                        <div class="mb-3">
+                            <label class="form-label" id="otm_reason_label">Reason</label>
+                            <textarea id="otm_reason_text" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" id="otm_reason_confirm"
+                                    class="btn btn-danger btn-lg">CONFIRM</button>
+                            <button type="button" class="btn btn-outline-secondary otm-modal-cancel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fullscreen image viewer -->
+                <div id="otm_lightbox" class="otm-lightbox">
+                    <button type="button" id="otm_lightbox_close"
+                            class="btn btn-light otm-lightbox-close">&#215;</button>
+                    <img id="otm_lightbox_img" src="" alt="Product image"/>
+                </div>
+
+                <!-- Toast -->
+                <div id="otm_toast" class="otm-toast d-none"></div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

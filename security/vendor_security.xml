@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <!-- Odoo 19: res.groups no longer accepts category_id; groups are
+         organised through res.groups.privilege referenced via privilege_id
+         (ODOO19_RULES.md Rule 21). -->
+    <record id="privilege_otm_vendor_product" model="res.groups.privilege">
+        <field name="name">Vendor Product Management</field>
+        <field name="category_id" ref="base.module_category_supply_chain"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="group_otm_vendor_user" model="res.groups">
+        <field name="name">Purchase User</field>
+        <field name="privilege_id" ref="privilege_otm_vendor_product"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Read access to vendor product submissions and duplicate reports.</field>
+    </record>
+
+    <record id="group_otm_vendor_manager" model="res.groups">
+        <field name="name">Purchase Manager</field>
+        <field name="privilege_id" ref="privilege_otm_vendor_product"/>
+        <field name="implied_ids" eval="[(4, ref('group_otm_vendor_user'))]"/>
+        <field name="comment">Review, select and reject vendor product submissions; review duplicates; create Odoo products.</field>
+    </record>
+
+    <record id="group_otm_vendor_admin" model="res.groups">
+        <field name="name">Vendor Product Administrator</field>
+        <field name="privilege_id" ref="privilege_otm_vendor_product"/>
+        <field name="implied_ids" eval="[(4, ref('group_otm_vendor_manager'))]"/>
+        <field name="comment">Full access, including configuration, categories and vendor portal accounts.</field>
+    </record>
+</odoo>

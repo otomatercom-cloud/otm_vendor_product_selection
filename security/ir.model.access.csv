@@ -1,0 +1,21 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_otm_category_user,otm.vendor.product.category user,model_otm_vendor_product_category,group_otm_vendor_user,1,0,0,0
+access_otm_category_manager,otm.vendor.product.category manager,model_otm_vendor_product_category,group_otm_vendor_manager,1,1,1,0
+access_otm_category_admin,otm.vendor.product.category admin,model_otm_vendor_product_category,group_otm_vendor_admin,1,1,1,1
+access_otm_category_portal,otm.vendor.product.category portal,model_otm_vendor_product_category,base.group_portal,1,0,0,0
+access_otm_tag_user,otm.vendor.product.tag user,model_otm_vendor_product_tag,group_otm_vendor_user,1,0,0,0
+access_otm_tag_manager,otm.vendor.product.tag manager,model_otm_vendor_product_tag,group_otm_vendor_manager,1,1,1,1
+access_otm_tag_portal,otm.vendor.product.tag portal,model_otm_vendor_product_tag,base.group_portal,1,0,0,0
+access_otm_submission_user,otm.vendor.product.submission user,model_otm_vendor_product_submission,group_otm_vendor_user,1,0,0,0
+access_otm_submission_manager,otm.vendor.product.submission manager,model_otm_vendor_product_submission,group_otm_vendor_manager,1,1,1,0
+access_otm_submission_admin,otm.vendor.product.submission admin,model_otm_vendor_product_submission,group_otm_vendor_admin,1,1,1,1
+access_otm_submission_portal,otm.vendor.product.submission portal,model_otm_vendor_product_submission,base.group_portal,1,1,1,0
+access_otm_image_user,otm.vendor.product.image user,model_otm_vendor_product_image,group_otm_vendor_user,1,0,0,0
+access_otm_image_manager,otm.vendor.product.image manager,model_otm_vendor_product_image,group_otm_vendor_manager,1,1,1,1
+access_otm_image_portal,otm.vendor.product.image portal,model_otm_vendor_product_image,base.group_portal,1,1,1,1
+access_otm_batch_user,otm.vendor.upload.batch user,model_otm_vendor_upload_batch,group_otm_vendor_user,1,0,0,0
+access_otm_batch_manager,otm.vendor.upload.batch manager,model_otm_vendor_upload_batch,group_otm_vendor_manager,1,1,1,1
+access_otm_batch_portal,otm.vendor.upload.batch portal,model_otm_vendor_upload_batch,base.group_portal,1,1,1,0
+access_otm_selection_wizard,otm.vendor.selection.wizard,model_otm_vendor_selection_wizard,group_otm_vendor_manager,1,1,1,1
+access_otm_rejection_wizard,otm.vendor.rejection.wizard,model_otm_vendor_rejection_wizard,group_otm_vendor_manager,1,1,1,1
+access_otm_portal_user_wizard_admin,otm.vendor.portal.user.wizard admin,model_otm_vendor_portal_user_wizard,group_otm_vendor_admin,1,1,1,1

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_vendor_submission_list" model="ir.ui.view">
+        <field name="name">otm.vendor.product.submission.list</field>
+        <field name="model">otm.vendor.product.submission</field>
+        <field name="arch" type="xml">
+            <list default_order="create_date desc" multi_edit="1">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="vendor_sku" optional="show"/>
+                <field name="primary_category_id" optional="show"/>
+                <field name="purchase_price" widget="monetary" optional="show"/>
+                <field name="mrp" widget="monetary" optional="show"/>
+                <field name="image_count" optional="hide"/>
+                <field name="has_duplicate_flag" widget="boolean_toggle"
+                       string="Duplicate?" readonly="1" optional="show"/>
+                <field name="submit_date" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'selected'"
+                       decoration-danger="state == 'rejected'"
+                       decoration-warning="state in ('duplicate_review', 'changes_requested')"
+                       decoration-info="state in ('submitted', 'under_review')"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_submission_kanban" model="ir.ui.view">
+        <field name="name">otm.vendor.product.submission.kanban</field>
+        <field name="model">otm.vendor.product.submission</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="state"/>
+                <field name="has_duplicate_flag"/>
+                <field name="currency_id"/>
+                <field name="main_image_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-column">
+                            <field name="name" class="fw-bold fs-5"/>
+                            <field name="vendor_id"/>
+                            <div class="d-flex justify-content-between">
+                                <field name="purchase_price" widget="monetary"/>
+                                <field name="primary_category_id"/>
+                            </div>
+                            <div t-if="record.has_duplicate_flag.raw_value"
+                                 class="badge text-bg-warning mt-1">Duplicate flagged</div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_submission_form" model="ir.ui.view">
+        <field name="name">otm.vendor.product.submission.form</field>
+        <field name="model">otm.vendor.product.submission</field>
+        <field name="arch" type="xml">
+            <form string="Vendor Product Submission">
+                <header>
+                    <!-- All buttons re-check the manager group server-side. -->
+                    <button name="action_submit" type="object" string="Submit for Review"
+                            class="btn-primary" invisible="state not in ('draft', 'changes_requested')"/>
+                    <button name="action_start_review" type="object" string="Start Review"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state != 'submitted'"/>
+                    <button name="%(otm_vendor_product_selection.action_otm_vendor_selection_wizard)d"
+                            type="action" string="Select" class="btn-success"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state not in ('submitted', 'under_review', 'duplicate_review')"/>
+                    <button name="%(otm_vendor_product_selection.action_otm_vendor_rejection_wizard)d"
+                            type="action" string="Reject" class="btn-danger"
+                            context="{'default_mode': 'reject'}"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state not in ('submitted', 'under_review', 'duplicate_review')"/>
+                    <button name="%(otm_vendor_product_selection.action_otm_vendor_rejection_wizard)d"
+                            type="action" string="Request Changes"
+                            context="{'default_mode': 'request_changes'}"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state not in ('submitted', 'under_review', 'duplicate_review')"/>
+                    <button name="action_send_duplicate_review" type="object"
+                            string="Send to Duplicate Review"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state not in ('submitted', 'under_review') or not has_duplicate_flag"/>
+                    <button name="action_create_product" type="object"
+                            string="Create Odoo Product" class="btn-primary"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state != 'selected' or product_tmpl_id"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state not in ('rejected', 'archived')"/>
+                    <button name="action_archive_submission" type="object" string="Archive"
+                            groups="otm_vendor_product_selection.group_otm_vendor_manager"
+                            invisible="state not in ('rejected', 'selected')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,under_review,selected"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Duplicate Flagged" bg_color="text-bg-warning"
+                            invisible="not has_duplicate_flag"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Women's Floral Kurti"/></h1>
+                        <h3><field name="code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Vendor">
+                            <field name="vendor_id" readonly="state != 'draft'"/>
+                            <field name="vendor_sku"/>
+                            <field name="brand"/>
+                        </group>
+                        <group string="Categories">
+                            <field name="primary_category_id"/>
+                            <field name="category_ids" widget="many2many_tags"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color'}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Attributes">
+                            <field name="material"/>
+                            <field name="color"/>
+                            <field name="size"/>
+                            <field name="available_sizes"/>
+                            <field name="gender"/>
+                            <field name="season"/>
+                            <field name="style"/>
+                        </group>
+                        <group string="Commercials">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="purchase_price" widget="monetary"/>
+                            <field name="mrp" widget="monetary"/>
+                            <field name="min_order_qty"/>
+                            <field name="available_qty"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Images" name="images">
+                            <field name="main_image_id" domain="[('submission_id', '=', id)]"/>
+                            <field name="image_ids" mode="kanban"
+                                   context="{'default_submission_id': id, 'default_vendor_id': vendor_id}"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                            <field name="vendor_notes" placeholder="Vendor notes..."/>
+                        </page>
+                        <page string="Review &amp; Selection" name="review"
+                              groups="otm_vendor_product_selection.group_otm_vendor_user">
+                            <group>
+                                <group string="Selection">
+                                    <field name="selected_by_id"/>
+                                    <field name="selected_date"/>
+                                    <field name="selected_qty"/>
+                                    <field name="negotiated_price" widget="monetary"/>
+                                    <field name="selection_notes"/>
+                                </group>
+                                <group string="Review">
+                                    <field name="review_user_id"/>
+                                    <field name="submit_date"/>
+                                    <field name="rejection_reason"/>
+                                    <field name="change_request_notes"/>
+                                    <field name="manager_comments"/>
+                                    <field name="product_tmpl_id"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_submission_search" model="ir.ui.view">
+        <field name="name">otm.vendor.product.submission.search</field>
+        <field name="model">otm.vendor.product.submission</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Product"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('code', 'ilike', self), ('vendor_sku', 'ilike', self)]"/>
+                <field name="vendor_id"/>
+                <field name="primary_category_id"/>
+                <field name="category_ids" string="Any Category"/>
+                <field name="purchase_price"/>
+                <filter name="filter_new" string="New Submissions"
+                        domain="[('state', '=', 'submitted')]"/>
+                <filter name="filter_under_review" string="Under Review"
+                        domain="[('state', '=', 'under_review')]"/>
+                <filter name="filter_selected" string="Selected"
+                        domain="[('state', '=', 'selected')]"/>
+                <filter name="filter_rejected" string="Rejected"
+                        domain="[('state', '=', 'rejected')]"/>
+                <filter name="filter_duplicates" string="Duplicate Flagged"
+                        domain="[('has_duplicate_flag', '=', True)]"/>
+                <separator/>
+                <filter name="filter_submit_date" string="Submission Date"
+                        date="submit_date"/>
+                <group>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_vendor" string="Vendor"
+                            context="{'group_by': 'vendor_id'}"/>
+                    <filter name="group_category" string="Main Category"
+                            context="{'group_by': 'primary_category_id'}"/>
+                    <filter name="group_submit_month" string="Submission Month"
+                            context="{'group_by': 'submit_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_product_submission" model="ir.actions.act_window">
+        <field name="name">Product Submissions</field>
+        <field name="res_model">otm.vendor.product.submission</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No vendor product submissions yet</p>
+            <p>Vendors submit products from the portal at <code>/my/vendor</code>; review them here or from the mobile interface at <code>/purchase/product-review</code>.</p>
+        </field>
+    </record>
+
+    <record id="action_otm_submission_new" model="ir.actions.act_window">
+        <field name="name">New Submissions</field>
+        <field name="res_model">otm.vendor.product.submission</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', '=', 'submitted')]</field>
+    </record>
+
+    <record id="action_otm_submission_under_review" model="ir.actions.act_window">
+        <field name="name">Under Review</field>
+        <field name="res_model">otm.vendor.product.submission</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', 'in', ('under_review', 'duplicate_review'))]</field>
+    </record>
+
+    <record id="action_otm_submission_selected" model="ir.actions.act_window">
+        <field name="name">Selected</field>
+        <field name="res_model">otm.vendor.product.submission</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state', '=', 'selected')]</field>
+    </record>
+
+    <record id="action_otm_submission_rejected" model="ir.actions.act_window">
+        <field name="name">Rejected</field>
+        <field name="res_model">otm.vendor.product.submission</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state', '=', 'rejected')]</field>
+    </record>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_vendor_rejection_wizard_form" model="ir.ui.view">
+        <field name="name">otm.vendor.rejection.wizard.form</field>
+        <field name="model">otm.vendor.rejection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reject / Request Changes">
+                <group>
+                    <field name="submission_count" string="Products"/>
+                    <field name="submission_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="mode" widget="radio"/>
+                    <field name="reason" placeholder="This reason is e-mailed to the vendor..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_rejection_wizard" model="ir.actions.act_window">
+        <field name="name">Reject / Request Changes</field>
+        <field name="res_model">otm.vendor.rejection.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_otm_vendor_product_submission"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="group_ids" eval="[(4, ref('otm_vendor_product_selection.group_otm_vendor_manager'))]"/>
+    </record>
+</odoo>

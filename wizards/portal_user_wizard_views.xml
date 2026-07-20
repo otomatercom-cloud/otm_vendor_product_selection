@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_vendor_portal_user_wizard_form" model="ir.ui.view">
+        <field name="name">otm.vendor.portal.user.wizard.form</field>
+        <field name="model">otm.vendor.portal.user.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create / Reset Vendor Portal Login">
+                <group>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="login" placeholder="vendor@example.com"/>
+                    <field name="password" password="True"/>
+                    <field name="confirm_password" password="True"/>
+                </group>
+                <p class="text-muted" invisible="not existing_user_id">
+                    A portal user with this login already exists — its
+                    password will be reset and portal access re-confirmed
+                    instead of creating a new one.
+                </p>
+                <field name="existing_user_id" invisible="1"/>
+                <footer>
+                    <button string="Create / Reset Login" type="object"
+                            name="action_create_or_reset_user"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_portal_user_wizard" model="ir.actions.act_window">
+        <field name="name">Create Portal Login</field>
+        <field name="res_model">otm.vendor.portal.user.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

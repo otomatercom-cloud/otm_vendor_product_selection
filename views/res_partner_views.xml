@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_partner_form_otm_vendor" model="ir.ui.view">
+        <field name="name">res.partner.form.otm.vendor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_otm_view_submissions" type="object"
+                        class="oe_stat_button" icon="fa-cubes"
+                        invisible="not is_otm_vendor"
+                        groups="otm_vendor_product_selection.group_otm_vendor_user">
+                    <field name="otm_submission_count" widget="statinfo"
+                           string="Submissions"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Fashion Vendor" name="otm_vendor"
+                      groups="otm_vendor_product_selection.group_otm_vendor_user">
+                    <group>
+                        <group>
+                            <field name="is_otm_vendor"/>
+                            <field name="otm_vendor_code" readonly="1"/>
+                            <field name="otm_vendor_type" invisible="not is_otm_vendor"/>
+                            <field name="otm_vendor_contact_person" invisible="not is_otm_vendor"/>
+                            <field name="otm_vendor_whatsapp" invisible="not is_otm_vendor"/>
+                        </group>
+                        <group invisible="not is_otm_vendor">
+                            <field name="otm_vendor_registration_date"/>
+                            <field name="otm_vendor_active"/>
+                            <field name="otm_portal_user_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group invisible="not is_otm_vendor">
+                        <field name="otm_vendor_notes" placeholder="Internal notes about this vendor..."/>
+                    </group>
+                    <button name="action_otm_grant_portal_access" type="object"
+                            string="Grant Portal Access" class="btn-primary"
+                            invisible="not is_otm_vendor"
+                            groups="otm_vendor_product_selection.group_otm_vendor_admin"/>
+                    <button name="%(action_otm_vendor_portal_user_wizard)d"
+                            type="action"
+                            string="Create Portal Login (No E-mail Needed)"
+                            class="btn-secondary"
+                            context="{'default_partner_id': id}"
+                            invisible="not is_otm_vendor"
+                            groups="otm_vendor_product_selection.group_otm_vendor_admin"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_partners" model="ir.actions.act_window">
+        <field name="name">Vendors</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_otm_vendor', '=', True)]</field>
+        <field name="context">{'default_is_otm_vendor': True, 'default_supplier_rank': 1, 'default_company_type': 'company'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first fashion vendor</p>
+            <p>Vendors get an automatic vendor code and can be granted a portal login to submit products.</p>
+        </field>
+    </record>
+</odoo>

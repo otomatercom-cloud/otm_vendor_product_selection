@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_process_pending_images" model="ir.cron">
+            <field name="name">Vendor Products: analyse pending images for duplicates</field>
+            <field name="model_id" ref="model_otm_vendor_duplicate_service"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_process_pending_images()</field>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

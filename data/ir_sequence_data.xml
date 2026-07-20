@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <data noupdate="1">
+        <record id="seq_otm_vendor_code" model="ir.sequence">
+            <field name="name">Vendor Code</field>
+            <field name="code">otm.vendor.code</field>
+            <field name="prefix">VEN/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_otm_vendor_submission" model="ir.sequence">
+            <field name="name">Vendor Product Submission</field>
+            <field name="code">otm.vendor.product.submission</field>
+            <field name="prefix">VPS/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_otm_upload_batch" model="ir.sequence">
+            <field name="name">Vendor Upload Batch</field>
+            <field name="code">otm.vendor.upload.batch</field>
+            <field name="prefix">VB/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <data noupdate="1">
+        <record id="mail_template_otm_submission_submitted" model="mail.template">
+            <field name="name">Vendor Product: Submitted</field>
+            <field name="model_id" ref="model_otm_vendor_product_submission"/>
+            <field name="subject">Product Submitted: {{ object.name }} ({{ object.code }})</field>
+            <field name="email_to">{{ object.vendor_id.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <p>Dear <t t-out="object.vendor_id.name"/>,</p>
+    <p>Your product has been submitted for review.</p>
+    <ul>
+        <li><strong>Product:</strong> <t t-out="object.name"/></li>
+        <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
+        <li><strong>Status:</strong> Submitted</li>
+    </ul>
+    <p>You will be notified once the Purchase Manager reviews it.</p>
+    <p>— Otomater Vendor Portal</p>
+</div>
+            </field>
+        </record>
+
+        <record id="mail_template_otm_submission_selected" model="mail.template">
+            <field name="name">Vendor Product: Selected</field>
+            <field name="model_id" ref="model_otm_vendor_product_submission"/>
+            <field name="subject">Product SELECTED: {{ object.name }} ({{ object.code }})</field>
+            <field name="email_to">{{ object.vendor_id.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <p>Dear <t t-out="object.vendor_id.name"/>,</p>
+    <p>Congratulations! Your product has been <strong>selected</strong>.</p>
+    <ul>
+        <li><strong>Product:</strong> <t t-out="object.name"/></li>
+        <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
+        <li><strong>Status:</strong> Selected</li>
+        <li><strong>Selected Quantity:</strong> <t t-out="object.selected_qty"/></li>
+        <li><strong>Selected Price:</strong> <t t-out="object.negotiated_price or object.purchase_price"/></li>
+        <li><strong>Comments:</strong> <t t-out="object.selection_notes or object.manager_comments or '-'"/></li>
+    </ul>
+    <p>Log in to the vendor portal to view the details.</p>
+    <p>— Otomater Vendor Portal</p>
+</div>
+            </field>
+        </record>
+
+        <record id="mail_template_otm_submission_rejected" model="mail.template">
+            <field name="name">Vendor Product: Rejected</field>
+            <field name="model_id" ref="model_otm_vendor_product_submission"/>
+            <field name="subject">Product Rejected: {{ object.name }} ({{ object.code }})</field>
+            <field name="email_to">{{ object.vendor_id.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <p>Dear <t t-out="object.vendor_id.name"/>,</p>
+    <p>Unfortunately your product was <strong>not selected</strong>.</p>
+    <ul>
+        <li><strong>Product:</strong> <t t-out="object.name"/></li>
+        <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
+        <li><strong>Status:</strong> Rejected</li>
+        <li><strong>Comments:</strong> <t t-out="object.rejection_reason or object.manager_comments or '-'"/></li>
+    </ul>
+    <p>— Otomater Vendor Portal</p>
+</div>
+            </field>
+        </record>
+
+        <record id="mail_template_otm_submission_changes" model="mail.template">
+            <field name="name">Vendor Product: Changes Requested</field>
+            <field name="model_id" ref="model_otm_vendor_product_submission"/>
+            <field name="subject">Changes Requested: {{ object.name }} ({{ object.code }})</field>
+            <field name="email_to">{{ object.vendor_id.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <p>Dear <t t-out="object.vendor_id.name"/>,</p>
+    <p>The Purchase Manager has requested changes to your product submission.</p>
+    <ul>
+        <li><strong>Product:</strong> <t t-out="object.name"/></li>
+        <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
+        <li><strong>Status:</strong> Changes Requested</li>
+        <li><strong>Requested Changes:</strong> <t t-out="object.change_request_notes or '-'"/></li>
+    </ul>
+    <p>Please update the product in the vendor portal and re-submit.</p>
+    <p>— Otomater Vendor Portal</p>
+</div>
+            </field>
+        </record>
+
+        <record id="mail_template_otm_submission_duplicate" model="mail.template">
+            <field name="name">Vendor Product: Duplicate Detected</field>
+            <field name="model_id" ref="model_otm_vendor_product_submission"/>
+            <field name="subject">Duplicate Image Detected: {{ object.name }} ({{ object.code }})</field>
+            <field name="email_to">{{ object.vendor_id.email }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <p>Dear <t t-out="object.vendor_id.name"/>,</p>
+    <p>One or more images of your product submission matched images already in our catalogue and are under duplicate review.</p>
+    <ul>
+        <li><strong>Product:</strong> <t t-out="object.name"/></li>
+        <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
+        <li><strong>Status:</strong> Duplicate Review</li>
+        <li><strong>Comments:</strong> <t t-out="object.manager_comments or '-'"/></li>
+    </ul>
+    <p>No action is required from you at this time.</p>
+    <p>— Otomater Vendor Portal</p>
+</div>
+            </field>
+        </record>
+    </data>
+</odoo>

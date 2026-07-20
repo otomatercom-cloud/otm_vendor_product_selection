@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_vendor_category_list" model="ir.ui.view">
+        <field name="name">otm.vendor.product.category.list</field>
+        <field name="model">otm.vendor.product.category</field>
+        <field name="arch" type="xml">
+            <list default_order="complete_name">
+                <field name="sequence" widget="handle"/>
+                <field name="complete_name"/>
+                <field name="code" optional="show"/>
+                <field name="parent_id" optional="hide"/>
+                <field name="active" widget="boolean_toggle" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_category_form" model="ir.ui.view">
+        <field name="name">otm.vendor.product.category.form</field>
+        <field name="model">otm.vendor.product.category</field>
+        <field name="arch" type="xml">
+            <form string="Product Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_submissions" type="object"
+                                class="oe_stat_button" icon="fa-cubes">
+                            <field name="submission_count" widget="statinfo"
+                                   string="Submissions"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Maxi Dresses"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="parent_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="complete_name"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Internal description of this category..."/>
+                        </page>
+                        <page string="Child Categories" name="children">
+                            <field name="child_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_otm_vendor_category_search" model="ir.ui.view">
+        <field name="name">otm.vendor.product.category.search</field>
+        <field name="model">otm.vendor.product.category</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="complete_name" string="Category"
+                       filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="parent_id"/>
+                <filter name="filter_root" string="Root Categories"
+                        domain="[('parent_id', '=', False)]"/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="group_parent" string="Parent Category"
+                            context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_otm_vendor_category" model="ir.actions.act_window">
+        <field name="name">Product Categories</field>
+        <field name="res_model">otm.vendor.product.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first product category</p>
+            <p>Build a hierarchy such as Women / Dresses / Maxi Dresses. Products can belong to several categories plus one main category.</p>
+        </field>
+    </record>
+</odoo>

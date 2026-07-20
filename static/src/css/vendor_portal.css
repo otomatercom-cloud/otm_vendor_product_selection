@@ -1,0 +1,212 @@
+/* Part of Otomater. See LICENSE file for full copyright and licensing details. */
+/* Vendor portal — mobile-first, plain CSS (no SCSS, Odoo 19 asset pipeline). */
+
+.otm-vendor-portal {
+    padding-bottom: 2rem;
+}
+
+/* Horizontal scrolling nav pills on small screens */
+.otm-vendor-nav .d-flex {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.otm-vendor-nav .d-flex::-webkit-scrollbar {
+    display: none;
+}
+.otm-vendor-nav .btn {
+    white-space: nowrap;
+}
+
+/* Dashboard stat cards */
+.otm-stat-card {
+    transition: transform 0.1s ease;
+}
+.otm-stat-card:active {
+    transform: scale(0.97);
+}
+
+/* Product cards */
+.otm-product-card {
+    overflow: hidden;
+    transition: box-shadow 0.15s ease;
+}
+.otm-product-card:hover {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+}
+.otm-card-img-wrap {
+    position: relative;
+}
+.otm-card-img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    background-color: #f2f2f2;
+}
+.otm-card-img-placeholder {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background-color: #f2f2f2;
+    font-size: 0.85rem;
+}
+.otm-dup-badge {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+}
+.otm-main-badge {
+    position: absolute;
+    top: 0.35rem;
+    left: 0.35rem;
+}
+
+/* Image grid on the product detail page */
+.otm-thumb {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background-color: #f2f2f2;
+}
+.otm-img-delete {
+    position: absolute;
+    bottom: 0.25rem;
+    right: 0.25rem;
+    padding: 0 0.45rem;
+    line-height: 1.4;
+    min-width: 2rem;
+    min-height: 2rem; /* touch-friendly */
+}
+
+/* Upload widgets */
+.otm-dropzone {
+    border-style: dashed !important;
+    background-color: #fafafa;
+    cursor: pointer;
+}
+.otm-dropzone.otm-dragover {
+    background-color: #eef4ff;
+    border-color: #0d6efd !important;
+}
+.otm-upload-previews img,
+#otm_bulk_previews img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    background-color: #f2f2f2;
+}
+.otm-preview-cell {
+    position: relative;
+}
+.otm-preview-remove {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    min-width: 1.9rem;
+    min-height: 1.9rem;
+    padding: 0;
+    line-height: 1.2;
+}
+.otm-preview-cell.otm-preview-error img {
+    outline: 3px solid #dc3545;
+}
+.otm-preview-status {
+    position: absolute;
+    bottom: 0.2rem;
+    left: 0.2rem;
+    right: 0.2rem;
+    font-size: 0.65rem;
+    text-align: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 0.25rem;
+    padding: 0 0.15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Prevent double-submit visual feedback */
+.otm-single-submit button[disabled] {
+    opacity: 0.65;
+}
+
+/* Bulk upload: image grouping grid */
+.otm-group-cell {
+    position: relative;
+    cursor: pointer;
+}
+.otm-group-cell img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    background-color: #f2f2f2;
+    border: 3px solid transparent;
+}
+.otm-group-cell.otm-group-selected img {
+    border-color: #198754;
+}
+.otm-group-cell.otm-group-assigned img {
+    opacity: 0.45;
+}
+.otm-group-check {
+    position: absolute;
+    top: 0.3rem;
+    left: 0.3rem;
+    width: 1.4rem;
+    height: 1.4rem;
+}
+.otm-group-badge {
+    position: absolute;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    right: 0.25rem;
+    font-size: 0.62rem;
+    text-align: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 0.25rem;
+    padding: 0 0.15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.otm-group-badge.otm-badge-dup {
+    background: rgba(217, 119, 6, 0.85);
+}
+
+/* Quick product modal */
+.otm-quick-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.otm-quick-modal.otm-open {
+    display: flex;
+}
+.otm-quick-modal-panel {
+    background: #fff;
+    border-radius: 0.6rem;
+    width: 100%;
+    max-width: 24rem;
+    padding: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Larger touch targets on phones */
+@media (max-width: 576px) {
+    .otm-vendor-portal .btn {
+        min-height: 2.5rem;
+    }
+    .otm-vendor-portal .form-control,
+    .otm-vendor-portal .form-select {
+        min-height: 2.6rem;
+        font-size: 1rem; /* avoid iOS zoom-on-focus */
+    }
+}

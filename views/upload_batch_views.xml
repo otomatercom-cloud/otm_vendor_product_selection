@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_upload_batch_list" model="ir.ui.view">
+        <field name="name">otm.vendor.upload.batch.list</field>
+        <field name="model">otm.vendor.upload.batch</field>
+        <field name="arch" type="xml">
+            <list default_order="create_date desc">
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="upload_date"/>
+                <field name="total_images"/>
+                <field name="new_images"/>
+                <field name="exact_duplicates"/>
+                <field name="possible_duplicates"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'failed'"
+                       decoration-info="state in ('uploading', 'processing')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_otm_upload_batch_form" model="ir.ui.view">
+        <field name="name">otm.vendor.upload.batch.form</field>
+        <field name="model">otm.vendor.upload.batch</field>
+        <field name="arch" type="xml">
+            <form string="Upload Batch">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="vendor_id"/>
+                            <field name="uploaded_by_id"/>
+                            <field name="upload_date"/>
+                        </group>
+                        <group>
+                            <field name="total_images"/>
+                            <field name="new_images"/>
+                            <field name="exact_duplicates"/>
+                            <field name="possible_duplicates"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Images" name="images">
+                            <field name="image_ids">
+                                <list>
+                                    <field name="image_128" widget="image" string="Preview" options="{'size': [64, 64]}"/>
+                                    <field name="name"/>
+                                    <field name="submission_id"/>
+                                    <field name="duplicate_status" widget="badge"/>
+                                    <field name="similarity_score"/>
+                                    <field name="process_state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                        <page string="Error Log" name="errors">
+                            <field name="error_log"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_otm_upload_batch_search" model="ir.ui.view">
+        <field name="name">otm.vendor.upload.batch.search</field>
+        <field name="model">otm.vendor.upload.batch</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <filter name="filter_processing" string="Processing"
+                        domain="[('state', 'in', ('uploading', 'processing'))]"/>
+                <filter name="filter_done" string="Completed"
+                        domain="[('state', '=', 'done')]"/>
+                <filter name="filter_failed" string="Failed"
+                        domain="[('state', '=', 'failed')]"/>
+                <group>
+                    <filter name="group_vendor" string="Vendor"
+                            context="{'group_by': 'vendor_id'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_otm_upload_batch" model="ir.actions.act_window">
+        <field name="name">Upload Batches</field>
+        <field name="res_model">otm.vendor.upload.batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

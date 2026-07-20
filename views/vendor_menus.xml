@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <menuitem id="menu_otm_vendor_root"
+              name="Vendor Products"
+              sequence="55"
+              groups="otm_vendor_product_selection.group_otm_vendor_user"
+              web_icon="otm_vendor_product_selection,static/description/icon.png"/>
+
+    <!-- Dashboard = grouped kanban of all submissions -->
+    <menuitem id="menu_otm_vendor_dashboard"
+              name="Dashboard"
+              parent="menu_otm_vendor_root"
+              action="action_otm_vendor_product_submission"
+              sequence="1"/>
+
+    <!-- ================================================================ -->
+    <!-- Frontend/portal link shortcuts — so managers/admins can find and  -->
+    <!-- open the customer-facing URLs from inside the backend instead of -->
+    <!-- having to know or type them. target="new" opens a normal browser -->
+    <!-- tab so the frontend page isn't loaded inside the backend iframe.  -->
+    <!-- ================================================================ -->
+    <record id="action_otm_open_review_interface" model="ir.actions.act_url">
+        <field name="name">Purchase Review App (Mobile)</field>
+        <field name="url">/purchase/product-review</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_otm_open_review_interface"
+              name="Purchase Review App"
+              parent="menu_otm_vendor_root"
+              action="action_otm_open_review_interface"
+              groups="otm_vendor_product_selection.group_otm_vendor_manager"
+              sequence="2"/>
+
+    <record id="action_otm_open_vendor_portal" model="ir.actions.act_url">
+        <field name="name">Vendor Portal Home</field>
+        <field name="url">/my/vendor</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_otm_open_vendor_portal"
+              name="Vendor Portal Home"
+              parent="menu_otm_vendor_root"
+              action="action_otm_open_vendor_portal"
+              sequence="3"/>
+
+    <menuitem id="menu_otm_submissions"
+              name="Product Submissions"
+              parent="menu_otm_vendor_root"
+              sequence="10"/>
+    <menuitem id="menu_otm_submissions_all"
+              name="All Products"
+              parent="menu_otm_submissions"
+              action="action_otm_vendor_product_submission"
+              sequence="1"/>
+    <menuitem id="menu_otm_submissions_new"
+              name="New Submissions"
+              parent="menu_otm_submissions"
+              action="action_otm_submission_new"
+              sequence="2"/>
+    <menuitem id="menu_otm_submissions_review"
+              name="Under Review"
+              parent="menu_otm_submissions"
+              action="action_otm_submission_under_review"
+              sequence="3"/>
+    <menuitem id="menu_otm_submissions_selected"
+              name="Selected"
+              parent="menu_otm_submissions"
+              action="action_otm_submission_selected"
+              sequence="4"/>
+    <menuitem id="menu_otm_submissions_rejected"
+              name="Rejected"
+              parent="menu_otm_submissions"
+              action="action_otm_submission_rejected"
+              sequence="5"/>
+
+    <menuitem id="menu_otm_duplicates"
+              name="Duplicate Management"
+              parent="menu_otm_vendor_root"
+              sequence="20"
+              groups="otm_vendor_product_selection.group_otm_vendor_manager"/>
+    <menuitem id="menu_otm_duplicates_exact"
+              name="Exact Duplicates"
+              parent="menu_otm_duplicates"
+              action="action_otm_vendor_image_exact_duplicates"
+              sequence="1"/>
+    <menuitem id="menu_otm_duplicates_possible"
+              name="Possible Duplicates"
+              parent="menu_otm_duplicates"
+              action="action_otm_vendor_image_possible_duplicates"
+              sequence="2"/>
+    <menuitem id="menu_otm_duplicates_review"
+              name="Duplicate Review"
+              parent="menu_otm_duplicates"
+              action="action_otm_vendor_image_review"
+              sequence="3"/>
+
+    <menuitem id="menu_otm_vendors"
+              name="Vendors"
+              parent="menu_otm_vendor_root"
+              action="action_otm_vendor_partners"
+              sequence="30"/>
+
+    <menuitem id="menu_otm_categories"
+              name="Categories"
+              parent="menu_otm_vendor_root"
+              action="action_otm_vendor_category"
+              sequence="40"
+              groups="otm_vendor_product_selection.group_otm_vendor_manager"/>
+
+    <menuitem id="menu_otm_batches"
+              name="Upload Batches"
+              parent="menu_otm_vendor_root"
+              action="action_otm_upload_batch"
+              sequence="50"/>
+
+    <menuitem id="menu_otm_config"
+              name="Configuration"
+              parent="menu_otm_vendor_root"
+              sequence="90"
+              groups="otm_vendor_product_selection.group_otm_vendor_admin"/>
+    <menuitem id="menu_otm_config_images"
+              name="All Product Images"
+              parent="menu_otm_config"
+              action="action_otm_vendor_image_all"
+              sequence="1"/>
+</odoo>

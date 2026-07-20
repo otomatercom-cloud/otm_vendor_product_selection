@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <data noupdate="1">
+        <!-- Hamming-distance thresholds on the 64-bit perceptual hash -->
+        <record id="param_duplicate_strict_distance" model="ir.config_parameter">
+            <field name="key">otm_vendor_product_selection.duplicate_strict_distance</field>
+            <field name="value">6</field>
+        </record>
+        <record id="param_duplicate_similar_distance" model="ir.config_parameter">
+            <field name="key">otm_vendor_product_selection.duplicate_similar_distance</field>
+            <field name="value">12</field>
+        </record>
+        <!-- Max size per uploaded image, in MB -->
+        <record id="param_max_upload_size_mb" model="ir.config_parameter">
+            <field name="key">otm_vendor_product_selection.max_upload_size_mb</field>
+            <field name="value">10</field>
+        </record>
+        <!-- Uploads up to this many files are analysed synchronously in the
+             HTTP request; larger batches are handled by the cron worker. -->
+        <record id="param_sync_processing_limit" model="ir.config_parameter">
+            <field name="key">otm_vendor_product_selection.sync_processing_limit</field>
+            <field name="value">20</field>
+        </record>
+    </data>
+</odoo>

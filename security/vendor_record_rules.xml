@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <!-- Portal vendors see ONLY their own submissions (own partner or its
+         commercial parent). Combined with the field/state whitelist enforced
+         in vendor_submission.write(), a portal user can never read another
+         vendor's prices nor forge a status change. -->
+    <record id="rule_otm_submission_portal" model="ir.rule">
+        <field name="name">Vendor Submissions: portal vendors own records only</field>
+        <field name="model_id" ref="model_otm_vendor_product_submission"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">['|', ('vendor_id', '=', user.partner_id.id), ('vendor_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_otm_image_portal" model="ir.rule">
+        <field name="name">Vendor Images: portal vendors own records only</field>
+        <field name="model_id" ref="model_otm_vendor_product_image"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">['|', ('vendor_id', '=', user.partner_id.id), ('vendor_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_otm_batch_portal" model="ir.rule">
+        <field name="name">Upload Batches: portal vendors own records only</field>
+        <field name="model_id" ref="model_otm_vendor_upload_batch"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">['|', ('vendor_id', '=', user.partner_id.id), ('vendor_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Internal users: no restriction (single-company install by default;
+         multi-company installs can tighten this later). -->
+    <record id="rule_otm_submission_internal" model="ir.rule">
+        <field name="name">Vendor Submissions: internal users all records</field>
+        <field name="model_id" ref="model_otm_vendor_product_submission"/>
+        <field name="groups" eval="[(4, ref('group_otm_vendor_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>
