@@ -50,29 +50,104 @@
     <!-- Shared vendor portal navigation                              -->
     <!-- ============================================================ -->
     <template id="portal_vendor_nav" name="Vendor Portal Navigation">
-        <div class="otm-vendor-nav mb-3">
-            <div class="d-flex flex-nowrap overflow-auto gap-2 pb-1">
-                <a href="/my/vendor"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name == 'otm_vendor_dashboard' else 'btn-outline-primary'}">Dashboard</a>
-                <a href="/my/vendor/products"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name == 'otm_vendor_products' else 'btn-outline-primary'}">My Products</a>
-                <a href="/my/vendor/product/new"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name == 'otm_vendor_product_new' else 'btn-outline-primary'}">Upload Product</a>
-                <a href="/my/vendor/upload"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name == 'otm_vendor_bulk_upload' else 'btn-outline-primary'}">Bulk Upload</a>
-                <a href="/my/vendor/upload/simple"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name in ('otm_vendor_simple_bulk_upload', 'otm_vendor_simple_bulk_group') else 'btn-outline-primary'}">Bulk Upload (Simple)</a>
-                <a href="/my/vendor/products?filterby=selected"
-                   class="btn btn-sm btn-outline-success">Selected</a>
-                <a href="/my/vendor/products?filterby=rejected"
-                   class="btn btn-sm btn-outline-danger">Rejected</a>
-                <a href="/my/vendor/batches"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name == 'otm_vendor_batches' else 'btn-outline-primary'}">Upload History</a>
-                <a href="/my/vendor/profile"
-                   t-attf-class="btn btn-sm #{'btn-primary' if page_name == 'otm_vendor_profile' else 'btn-outline-primary'}">My Profile</a>
+        <t t-set="otm_nav_items" t-value="[
+            ('main', 'Main', [
+                ('/my/vendor', 'bi-speedometer2', 'Overview', ['otm_vendor_dashboard']),
+                ('/my/vendor/products', 'bi-grid-3x3-gap', 'Products', ['otm_vendor_products']),
+                ('/my/vendor/product/new', 'bi-plus-circle', 'Upload Product', ['otm_vendor_product_new', 'otm_vendor_product_detail']),
+            ]),
+            ('uploads', 'Uploads', [
+                ('/my/vendor/upload', 'bi-cloud-upload', 'Bulk Upload', ['otm_vendor_bulk_upload']),
+                ('/my/vendor/batches', 'bi-clock-history', 'Upload History', ['otm_vendor_batches']),
+            ]),
+            ('status', 'Product Status', [
+                ('/my/vendor/products?filterby=selected', 'bi-check-circle', 'Selected', []),
+                ('/my/vendor/products?filterby=rejected', 'bi-x-circle', 'Rejected', []),
+            ]),
+            ('account', 'Account', [
+                ('/my/vendor/profile', 'bi-person-circle', 'My Profile', ['otm_vendor_profile']),
+            ]),
+        ]"/>
+
+        <!-- Desktop sidebar-style nav -->
+        <nav class="otm-vendor-nav">
+            <div class="otm-nav-desktop">
+                <t t-foreach="otm_nav_items" t-as="nav_group">
+                    <div class="otm-nav-group">
+                        <div class="otm-nav-group-label" t-out="nav_group[1]"/>
+                        <t t-foreach="nav_group[2]" t-as="nav_item">
+                            <a t-att-href="nav_item[0]"
+                               t-attf-class="otm-nav-link #{'otm-active' if page_name in nav_item[3] else ''}
+                                            #{'otm-success-hint' if nav_item[2] == 'Selected' else ''}
+                                            #{'otm-danger-hint' if nav_item[2] == 'Rejected' else ''}">
+                                <i t-attf-class="bi #{nav_item[1]}"/>
+                                <span t-out="nav_item[2]"/>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+                <div class="otm-nav-group">
+                    <div class="otm-nav-group-label">Fallback</div>
+                    <a href="/my/vendor/upload/simple"
+                       t-attf-class="otm-nav-link otm-secondary #{'otm-active' if page_name in ('otm_vendor_simple_bulk_upload', 'otm_vendor_simple_bulk_group') else ''}"
+                       title="Alternative upload method that works even without JavaScript">
+                        <i class="bi bi-life-preserver"/>
+                        <span>Bulk Upload (Simple)</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile top bar + offcanvas drawer -->
+        <div class="otm-nav-mobile-bar">
+            <span class="otm-nav-mobile-title">Vendor Portal</span>
+            <button type="button" class="otm-nav-toggle" id="otm_nav_toggle_btn"
+                    aria-label="Open navigation menu" aria-expanded="false"
+                    aria-controls="otm_nav_drawer">
+                <i class="bi bi-list"/>
+            </button>
+        </div>
+        <div class="otm-nav-drawer" id="otm_nav_drawer">
+            <div class="otm-nav-drawer-backdrop" id="otm_nav_drawer_backdrop"/>
+            <div class="otm-nav-drawer-panel">
+                <div class="otm-nav-drawer-header">
+                    <strong>Menu</strong>
+                    <button type="button" class="otm-nav-drawer-close"
+                            id="otm_nav_drawer_close" aria-label="Close navigation menu">
+                        <i class="bi bi-x-lg"/>
+                    </button>
+                </div>
+                <t t-foreach="otm_nav_items" t-as="nav_group">
+                    <div class="otm-nav-group">
+                        <div class="otm-nav-group-label" t-out="nav_group[1]"/>
+                        <t t-foreach="nav_group[2]" t-as="nav_item">
+                            <a t-att-href="nav_item[0]"
+                               t-attf-class="otm-nav-link #{'otm-active' if page_name in nav_item[3] else ''}">
+                                <i t-attf-class="bi #{nav_item[1]}"/>
+                                <span t-out="nav_item[2]"/>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+                <div class="otm-nav-group">
+                    <div class="otm-nav-group-label">Fallback</div>
+                    <a href="/my/vendor/upload/simple" class="otm-nav-link otm-secondary">
+                        <i class="bi bi-life-preserver"/>
+                        <span>Bulk Upload (Simple)</span>
+                    </a>
+                </div>
             </div>
         </div>
     </template>
+
+    <!-- Tiny inline script for the mobile drawer toggle only — no other
+         page behaviour depends on JS, so this degrades harmlessly if a
+         bundle is ever stale: the desktop nav and every route still work
+         without it, only the mobile hamburger menu would not open. The
+         actual logic lives in vendor_upload.js (initNavDrawer), which is
+         already loaded on every portal page via the manifest's asset
+         list — that's the correct/reliable place to add it, not template
+         inheritance against a bundle xmlid. -->
 
     <!-- Small helper: status badge -->
     <template id="portal_vendor_state_badge" name="Vendor Submission State Badge">
@@ -99,57 +174,100 @@
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h3 class="mb-0">Vendor Dashboard</h3>
-                    <span class="text-muted small" t-out="vendor.otm_vendor_code"/>
+
+                <div class="otm-page-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h3 class="otm-page-title">
+                            Welcome back, <t t-out="vendor.name"/>
+                        </h3>
+                        <p class="otm-page-subtitle">
+                            Here's an overview of your product submissions.
+                        </p>
+                        <span class="otm-vendor-code-chip mt-1">
+                            <i class="bi bi-upc-scan"/>
+                            <t t-out="vendor.otm_vendor_code"/>
+                        </span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="/my/vendor/product/new" class="btn btn-primary">
+                            <i class="bi bi-plus-lg me-1"/> Add Product
+                        </a>
+                        <a href="/my/vendor/upload" class="btn btn-outline-primary">
+                            <i class="bi bi-cloud-upload me-1"/> Bulk Upload
+                        </a>
+                    </div>
                 </div>
 
-                <div class="row g-2 otm-stat-grid">
-                    <t t-foreach="[
-                        ('Total Submitted', counts['total'], 'all', 'primary'),
-                        ('Draft', counts['draft'], 'draft', 'secondary'),
-                        ('Under Review', counts['under_review'], 'review', 'info'),
-                        ('Selected', counts['selected'], 'selected', 'success'),
-                        ('Rejected', counts['rejected'], 'rejected', 'danger'),
-                        ('Changes Requested', counts['changes_requested'], 'changes', 'warning'),
-                    ]" t-as="stat">
-                        <div class="col-6 col-md-4 col-lg-2">
-                            <a t-attf-href="/my/vendor/products?filterby=#{stat[2]}"
-                               class="text-decoration-none">
-                                <div t-attf-class="card otm-stat-card border-#{stat[3]} h-100">
-                                    <div class="card-body p-2 text-center">
-                                        <div t-attf-class="fs-3 fw-bold text-#{stat[3]}"
-                                             t-out="stat[1]"/>
-                                        <div class="small text-muted" t-out="stat[0]"/>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </t>
-                </div>
-
-                <div class="row g-2 mt-1">
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card border-warning h-100">
-                            <div class="card-body p-2 text-center">
-                                <div class="fs-3 fw-bold text-warning"
-                                     t-out="counts['duplicates']"/>
-                                <div class="small text-muted">Duplicate Images</div>
-                            </div>
-                        </div>
+                <div class="otm-kpi-grid mb-2">
+                    <a href="/my/vendor/products?filterby=all" class="otm-kpi-card otm-kpi-primary">
+                        <span class="otm-kpi-icon"><i class="bi bi-collection"/></span>
+                        <span class="otm-kpi-value" t-out="counts['total']"/>
+                        <span class="otm-kpi-label">Total Submitted</span>
+                    </a>
+                    <a href="/my/vendor/products?filterby=draft" class="otm-kpi-card otm-kpi-slate">
+                        <span class="otm-kpi-icon"><i class="bi bi-file-earmark"/></span>
+                        <span class="otm-kpi-value" t-out="counts['draft']"/>
+                        <span class="otm-kpi-label">Draft</span>
+                    </a>
+                    <a href="/my/vendor/products?filterby=review" class="otm-kpi-card otm-kpi-info">
+                        <span class="otm-kpi-icon"><i class="bi bi-hourglass-split"/></span>
+                        <span class="otm-kpi-value" t-out="counts['under_review']"/>
+                        <span class="otm-kpi-label">Under Review</span>
+                    </a>
+                    <a href="/my/vendor/products?filterby=selected" class="otm-kpi-card otm-kpi-success">
+                        <span class="otm-kpi-icon"><i class="bi bi-check-circle"/></span>
+                        <span class="otm-kpi-value" t-out="counts['selected']"/>
+                        <span class="otm-kpi-label">Selected</span>
+                    </a>
+                    <a href="/my/vendor/products?filterby=rejected" class="otm-kpi-card otm-kpi-danger">
+                        <span class="otm-kpi-icon"><i class="bi bi-x-circle"/></span>
+                        <span class="otm-kpi-value" t-out="counts['rejected']"/>
+                        <span class="otm-kpi-label">Rejected</span>
+                    </a>
+                    <a href="/my/vendor/products?filterby=changes" class="otm-kpi-card otm-kpi-warning">
+                        <span class="otm-kpi-icon"><i class="bi bi-pencil-square"/></span>
+                        <span class="otm-kpi-value" t-out="counts['changes_requested']"/>
+                        <span class="otm-kpi-label">Changes Requested</span>
+                    </a>
+                    <div class="otm-kpi-card otm-kpi-warning">
+                        <span class="otm-kpi-icon"><i class="bi bi-exclamation-triangle"/></span>
+                        <span class="otm-kpi-value" t-out="counts['duplicates']"/>
+                        <span class="otm-kpi-label">Duplicate Images</span>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-2">Recent Upload Batches</h5>
-                        <a href="/my/vendor/batches" class="small">View all</a>
+                    <h5 class="mb-2">Quick Actions</h5>
+                    <div class="otm-quick-actions">
+                        <a href="/my/vendor/product/new" class="otm-quick-action">
+                            <i class="bi bi-plus-circle"/>
+                            <span class="otm-quick-action-label">Upload New Product</span>
+                        </a>
+                        <a href="/my/vendor/upload" class="otm-quick-action">
+                            <i class="bi bi-images"/>
+                            <span class="otm-quick-action-label">Bulk Image Upload</span>
+                        </a>
+                        <a href="/my/vendor/products" class="otm-quick-action">
+                            <i class="bi bi-grid-3x3-gap"/>
+                            <span class="otm-quick-action-label">View My Products</span>
+                        </a>
+                        <a href="/my/vendor/products?filterby=selected" class="otm-quick-action">
+                            <i class="bi bi-trophy"/>
+                            <span class="otm-quick-action-label">View Selected Products</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Recent Upload Batches</h5>
+                        <a href="/my/vendor/batches" class="small fw-semibold">View all</a>
                     </div>
                     <t t-if="recent_batches">
-                        <div class="table-responsive">
-                            <table class="table table-sm align-middle">
+                        <div class="otm-card p-2">
+                            <table class="otm-batch-table table table-sm align-middle mb-0">
                                 <thead>
-                                    <tr>
+                                    <tr class="text-muted small">
                                         <th>Batch</th>
                                         <th class="text-end">Total</th>
                                         <th class="text-end">New</th>
@@ -159,26 +277,50 @@
                                 </thead>
                                 <tbody>
                                     <tr t-foreach="recent_batches" t-as="batch">
-                                        <td t-out="batch.name"/>
+                                        <td class="fw-semibold" t-out="batch.name"/>
                                         <td class="text-end" t-out="batch.total_images"/>
                                         <td class="text-end" t-out="batch.new_images"/>
                                         <td class="text-end"
                                             t-out="batch.exact_duplicates + batch.possible_duplicates"/>
                                         <td>
-                                            <span class="badge text-bg-light"
+                                            <t t-set="otm_batch_state_classes" t-value="{
+                                                'draft': 'otm-badge-draft', 'uploading': 'otm-badge-submitted',
+                                                'processing': 'otm-badge-under_review', 'done': 'otm-badge-selected',
+                                                'failed': 'otm-badge-rejected'}"/>
+                                            <span t-attf-class="otm-badge #{otm_batch_state_classes.get(batch.state, 'otm-badge-draft')}"
                                                   t-out="dict(batch._fields['state']._description_selection(batch.env)).get(batch.state)"/>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="otm-batch-cards">
+                                <div t-foreach="recent_batches" t-as="batch" class="otm-batch-card">
+                                    <div class="otm-batch-card-top">
+                                        <span class="otm-batch-card-name" t-out="batch.name"/>
+                                        <t t-set="otm_batch_state_classes" t-value="{
+                                            'draft': 'otm-badge-draft', 'uploading': 'otm-badge-submitted',
+                                            'processing': 'otm-badge-under_review', 'done': 'otm-badge-selected',
+                                            'failed': 'otm-badge-rejected'}"/>
+                                        <span t-attf-class="otm-badge #{otm_batch_state_classes.get(batch.state, 'otm-badge-draft')}"
+                                              t-out="dict(batch._fields['state']._description_selection(batch.env)).get(batch.state)"/>
+                                    </div>
+                                    <div class="otm-batch-card-stats">
+                                        <span>Total: <strong t-out="batch.total_images"/></span>
+                                        <span>New: <strong t-out="batch.new_images"/></span>
+                                        <span>Duplicates: <strong t-out="batch.exact_duplicates + batch.possible_duplicates"/></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </t>
-                    <p t-else="" class="text-muted">No upload batches yet.</p>
-                </div>
-
-                <div class="mt-3 d-grid d-md-block gap-2">
-                    <a href="/my/vendor/product/new" class="btn btn-primary me-md-2">Upload New Product</a>
-                    <a href="/my/vendor/upload" class="btn btn-outline-primary">Bulk Image Upload</a>
+                    <div t-else="" class="otm-empty-state">
+                        <i class="bi bi-inbox"/>
+                        <div class="otm-empty-state-title">No upload batches yet</div>
+                        <div class="otm-empty-state-text">
+                            Once you upload images in bulk, your batches will show up here.
+                        </div>
+                        <a href="/my/vendor/upload" class="btn btn-primary btn-sm">Bulk Image Upload</a>
+                    </div>
                 </div>
             </div>
         </t>
@@ -191,77 +333,99 @@
         <t t-call="portal.portal_layout">
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                    <h3 class="mb-0">My Products</h3>
-                    <a href="/my/vendor/product/new" class="btn btn-primary btn-sm">+ New Product</a>
+
+                <div class="otm-page-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h3 class="otm-page-title">My Products</h3>
+                        <p class="otm-page-subtitle">
+                            Manage and track products submitted for purchase review.
+                        </p>
+                    </div>
+                    <a href="/my/vendor/product/new" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"/> Add Product
+                    </a>
                 </div>
 
-                <form method="get" action="/my/vendor/products"
-                      class="row g-2 align-items-center mb-3">
-                    <div class="col-12 col-md-5">
-                        <input type="text" name="search" class="form-control"
-                               placeholder="Search name or SKU"
-                               t-att-value="search"/>
-                    </div>
-                    <div class="col-8 col-md-4">
-                        <select name="filterby" class="form-select">
-                            <t t-foreach="searchbar_filters.items()" t-as="item">
-                                <option t-att-value="item[0]"
-                                        t-att-selected="'selected' if item[0] == filterby else None"
-                                        t-out="item[1]['label']"/>
-                            </t>
-                        </select>
-                    </div>
-                    <div class="col-4 col-md-3 d-grid">
-                        <button type="submit" class="btn btn-outline-primary">Filter</button>
+                <form method="get" action="/my/vendor/products" class="otm-toolbar">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-12 col-md-5">
+                            <div class="otm-search-wrap">
+                                <i class="bi bi-search"/>
+                                <input type="text" name="search" class="form-control"
+                                       placeholder="Search name or SKU"
+                                       t-att-value="search"/>
+                            </div>
+                        </div>
+                        <div class="col-8 col-md-4">
+                            <select name="filterby" class="form-select">
+                                <t t-foreach="searchbar_filters.items()" t-as="item">
+                                    <option t-att-value="item[0]"
+                                            t-att-selected="'selected' if item[0] == filterby else None"
+                                            t-out="item[1]['label']"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-4 col-md-3 d-grid">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-funnel me-1"/> Filter
+                            </button>
+                        </div>
                     </div>
                 </form>
 
                 <t t-if="submissions">
-                    <div class="row g-3 otm-product-grid">
-                        <div t-foreach="submissions" t-as="submission"
-                             class="col-6 col-md-4 col-lg-3">
-                            <a t-attf-href="/my/vendor/product/#{submission.id}"
-                               class="card otm-product-card h-100 text-decoration-none">
-                                <div class="otm-card-img-wrap">
-                                    <t t-set="main_img"
-                                       t-value="submission.main_image_id or submission.image_ids[:1]"/>
-                                    <img t-if="main_img" loading="lazy"
-                                         t-attf-src="/web/image/otm.vendor.product.image/#{main_img.id}/image_512"
-                                         class="card-img-top otm-card-img"
-                                         t-att-alt="submission.name"/>
-                                    <div t-else="" class="otm-card-img otm-card-img-placeholder
-                                         d-flex align-items-center justify-content-center text-muted">
-                                        No image
-                                    </div>
-                                    <span t-if="submission.has_duplicate_flag"
-                                          class="badge text-bg-warning otm-dup-badge">Duplicate?</span>
+                    <div class="otm-product-grid">
+                        <a t-foreach="submissions" t-as="submission"
+                           t-attf-href="/my/vendor/product/#{submission.id}"
+                           class="otm-product-card">
+                            <div class="otm-card-img-wrap">
+                                <t t-set="main_img"
+                                   t-value="submission.main_image_id or submission.image_ids[:1]"/>
+                                <img t-if="main_img" loading="lazy"
+                                     t-attf-src="/web/image/otm.vendor.product.image/#{main_img.id}/image_512"
+                                     class="otm-card-img"
+                                     t-att-alt="submission.name"/>
+                                <div t-else="" class="otm-card-img-placeholder
+                                     d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-image"/>
                                 </div>
-                                <div class="card-body p-2">
-                                    <div class="fw-semibold text-truncate text-body"
-                                         t-out="submission.name"/>
-                                    <div class="small text-muted text-truncate"
-                                         t-out="submission.vendor_sku or submission.code"/>
-                                    <div class="d-flex justify-content-between align-items-center mt-1">
-                                        <span class="small">
-                                            <t t-out="submission.currency_id.symbol"/>
-                                            <t t-out="'%.2f' % submission.purchase_price"/>
-                                        </span>
-                                        <t t-call="otm_vendor_product_selection.portal_vendor_state_badge">
-                                            <t t-set="badge_submission" t-value="submission"/>
-                                        </t>
-                                    </div>
+                                <span t-if="submission.has_duplicate_flag"
+                                      class="otm-dup-badge otm-dup-possible otm-card-dup-flag">
+                                    <i class="bi bi-exclamation-triangle"/> Duplicate?
+                                </span>
+                            </div>
+                            <div class="otm-card-body">
+                                <div class="otm-card-name" t-out="submission.name"/>
+                                <div class="otm-card-sku"
+                                     t-out="submission.vendor_sku or submission.code"/>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <span class="otm-card-price">
+                                        <t t-out="submission.currency_id.symbol"/>
+                                        <t t-out="'%.2f' % submission.purchase_price"/>
+                                    </span>
+                                    <t t-call="otm_vendor_product_selection.portal_vendor_state_badge">
+                                        <t t-set="badge_submission" t-value="submission"/>
+                                    </t>
                                 </div>
-                            </a>
-                        </div>
+                            </div>
+                        </a>
                     </div>
                     <div class="o_portal_pager d-flex justify-content-center mt-3">
                         <t t-call="portal.pager"/>
                     </div>
                 </t>
-                <div t-else="" class="alert alert-info">
-                    No products found.
-                    <a href="/my/vendor/product/new">Upload your first product</a>.
+                <div t-else="" class="otm-empty-state">
+                    <i class="bi bi-search"/>
+                    <div class="otm-empty-state-title" t-if="search or filterby != 'all'">
+                        No products match your search
+                    </div>
+                    <div class="otm-empty-state-title" t-else="">No products yet</div>
+                    <div class="otm-empty-state-text">
+                        Upload your first product to start submitting items for purchase review.
+                    </div>
+                    <a href="/my/vendor/product/new" class="btn btn-primary btn-sm">
+                        Upload Product
+                    </a>
                 </div>
             </div>
         </t>
@@ -278,46 +442,56 @@
 
                 <div t-if="error" class="alert alert-danger" t-out="error"/>
 
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                    <h3 class="mb-0" t-out="submission.name"/>
+                <div class="otm-page-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <h3 class="otm-page-title mb-1" t-out="submission.name"/>
+                        <span class="text-muted small" t-out="submission.vendor_sku or submission.code"/>
+                    </div>
                     <t t-call="otm_vendor_product_selection.portal_vendor_state_badge">
                         <t t-set="badge_submission" t-value="submission"/>
                     </t>
                 </div>
 
                 <!-- Selection outcome -->
-                <div t-if="submission.state == 'selected'" class="alert alert-success">
-                    <strong>Congratulations — this product was SELECTED.</strong>
-                    <div class="row mt-2">
-                        <div class="col-6 col-md-3">
-                            <div class="small text-muted">Selected Quantity</div>
-                            <div t-out="'%g' % submission.selected_qty"/>
+                <div t-if="submission.state == 'selected'" class="otm-outcome-panel otm-outcome-success">
+                    <div class="otm-outcome-title">
+                        <i class="bi bi-trophy-fill"/> Congratulations — this product was selected
+                    </div>
+                    <div class="otm-outcome-grid">
+                        <div>
+                            <div class="otm-outcome-grid-label">Selected Quantity</div>
+                            <div class="otm-outcome-grid-value" t-out="'%g' % submission.selected_qty"/>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="small text-muted">Selected Price</div>
-                            <div>
+                        <div>
+                            <div class="otm-outcome-grid-label">Selected Price</div>
+                            <div class="otm-outcome-grid-value">
                                 <t t-out="submission.currency_id.symbol"/>
                                 <t t-out="'%.2f' % submission.negotiated_price"/>
                             </div>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="small text-muted">Selection Date</div>
-                            <div t-out="submission.selected_date"
+                        <div>
+                            <div class="otm-outcome-grid-label">Selection Date</div>
+                            <div class="otm-outcome-grid-value" t-out="submission.selected_date"
                                  t-options="{'widget': 'datetime'}"/>
                         </div>
-                        <div class="col-12 col-md-3" t-if="submission.selection_notes">
-                            <div class="small text-muted">Notes</div>
-                            <div t-out="submission.selection_notes"/>
+                        <div t-if="submission.selection_notes">
+                            <div class="otm-outcome-grid-label">Notes</div>
+                            <div class="otm-outcome-grid-value" t-out="submission.selection_notes"/>
                         </div>
                     </div>
                 </div>
                 <div t-if="submission.state == 'rejected' and submission.rejection_reason"
-                     class="alert alert-danger">
-                    <strong>Rejected:</strong> <span t-out="submission.rejection_reason"/>
+                     class="otm-outcome-panel otm-outcome-danger">
+                    <div class="otm-outcome-title">
+                        <i class="bi bi-x-circle-fill"/> Rejected
+                    </div>
+                    <span t-out="submission.rejection_reason"/>
                 </div>
                 <div t-if="submission.state == 'changes_requested'"
-                     class="alert alert-warning">
-                    <strong>Changes requested:</strong>
+                     class="otm-outcome-panel otm-outcome-warning">
+                    <div class="otm-outcome-title">
+                        <i class="bi bi-pencil-square"/> Changes requested
+                    </div>
                     <span t-out="submission.change_request_notes"/>
                 </div>
 
@@ -334,13 +508,23 @@
                                        target="_blank">
                                         <img loading="lazy"
                                              t-attf-src="/web/image/otm.vendor.product.image/#{image.id}/image_256"
-                                             class="img-fluid rounded otm-thumb"
+                                             class="img-fluid otm-thumb"
                                              t-att-alt="image.name"/>
                                     </a>
                                     <span t-if="image.is_main_image"
-                                          class="badge text-bg-primary otm-main-badge">Main</span>
-                                    <span t-if="image.duplicate_status in ('exact_duplicate', 'possible_duplicate', 'similar')"
-                                          class="badge text-bg-warning otm-dup-badge">Dup</span>
+                                          class="otm-main-badge">Main</span>
+                                    <span t-if="image.duplicate_status == 'exact_duplicate'"
+                                          class="otm-dup-badge otm-dup-exact position-absolute top-0 end-0 m-1">
+                                        <i class="bi bi-exclamation-octagon"/> Exact
+                                    </span>
+                                    <span t-elif="image.duplicate_status == 'possible_duplicate'"
+                                          class="otm-dup-badge otm-dup-possible position-absolute top-0 end-0 m-1">
+                                        <i class="bi bi-exclamation-triangle"/> Possible
+                                    </span>
+                                    <span t-elif="image.duplicate_status == 'similar'"
+                                          class="otm-dup-badge otm-dup-similar position-absolute top-0 end-0 m-1">
+                                        <i class="bi bi-info-circle"/> Similar
+                                    </span>
                                     <button t-if="editable" type="button"
                                             class="btn btn-sm btn-danger otm-img-delete"
                                             t-att-data-image-id="image.id"
@@ -349,13 +533,16 @@
                             </div>
                         </div>
 
-                        <div t-if="editable" class="mt-3 otm-upload-widget"
+                        <div t-if="editable" class="mt-3 otm-upload-panel otm-upload-widget"
                              t-attf-data-upload-url="/my/vendor/product/#{submission.id}/image/upload"
                              t-att-data-csrf="request.csrf_token()">
-                            <label class="form-label fw-semibold">Add Images</label>
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-cloud-arrow-up me-1"/> Add Images
+                            </label>
                             <input type="file" class="form-control otm-file-input"
                                    accept="image/jpeg,image/png,image/webp"
                                    capture="environment" multiple="multiple"/>
+                            <div class="form-text">JPG, PNG or WEBP. You can select multiple photos at once.</div>
                             <div class="otm-upload-previews row g-2 mt-1"></div>
                             <div class="progress mt-2 d-none otm-upload-progress">
                                 <div class="progress-bar" role="progressbar"
@@ -370,7 +557,6 @@
                     <!-- Details / edit form -->
                     <div class="col-12 col-lg-6">
                         <t t-if="editable">
-                            <h5>Edit Details</h5>
                             <t t-call="otm_vendor_product_selection.portal_vendor_product_fields">
                                 <t t-set="form_action"
                                    t-value="'/my/vendor/product/%s/update' % submission.id"/>
@@ -380,33 +566,74 @@
                                 <input type="hidden" name="csrf_token"
                                        t-att-value="request.csrf_token()"/>
                                 <button type="submit" class="btn btn-success w-100">
-                                    Submit for Review
+                                    <i class="bi bi-send-check me-1"/> Submit for Review
                                 </button>
                             </form>
                         </t>
                         <t t-else="">
-                            <h5>Details</h5>
-                            <table class="table table-sm">
-                                <tbody>
-                                    <tr><th>Reference</th><td t-out="submission.code"/></tr>
-                                    <tr><th>Vendor SKU</th><td t-out="submission.vendor_sku"/></tr>
-                                    <tr><th>Main Category</th>
-                                        <td t-out="submission.primary_category_id.complete_name"/></tr>
-                                    <tr><th>Categories</th>
-                                        <td t-out="', '.join(submission.category_ids.mapped('complete_name'))"/></tr>
-                                    <tr><th>Material</th><td t-out="submission.material"/></tr>
-                                    <tr><th>Color</th><td t-out="submission.color"/></tr>
-                                    <tr><th>Sizes</th><td t-out="submission.available_sizes or submission.size"/></tr>
-                                    <tr><th>Brand</th><td t-out="submission.brand"/></tr>
-                                    <tr><th>Purchase Price</th>
-                                        <td><t t-out="submission.currency_id.symbol"/> <t t-out="'%.2f' % submission.purchase_price"/></td></tr>
-                                    <tr><th>MRP</th>
-                                        <td><t t-out="submission.currency_id.symbol"/> <t t-out="'%.2f' % submission.mrp"/></td></tr>
-                                    <tr><th>Min Order Qty</th><td t-out="'%g' % submission.min_order_qty"/></tr>
-                                    <tr><th>Available Qty</th><td t-out="'%g' % submission.available_qty"/></tr>
-                                </tbody>
-                            </table>
-                            <div t-if="submission.description" t-out="submission.description"/>
+                            <div class="otm-form-section">
+                                <div class="otm-form-section-title">
+                                    <i class="bi bi-info-circle"/> Details
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Reference</span>
+                                    <span class="otm-info-row-value" t-out="submission.code"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Vendor SKU</span>
+                                    <span class="otm-info-row-value" t-out="submission.vendor_sku"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Main Category</span>
+                                    <span class="otm-info-row-value"
+                                          t-out="submission.primary_category_id.complete_name"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Categories</span>
+                                    <span class="otm-info-row-value"
+                                          t-out="', '.join(submission.category_ids.mapped('complete_name'))"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Material</span>
+                                    <span class="otm-info-row-value" t-out="submission.material"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Color</span>
+                                    <span class="otm-info-row-value" t-out="submission.color"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Sizes</span>
+                                    <span class="otm-info-row-value"
+                                          t-out="submission.available_sizes or submission.size"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Brand</span>
+                                    <span class="otm-info-row-value" t-out="submission.brand"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Purchase Price</span>
+                                    <span class="otm-info-row-value">
+                                        <t t-out="submission.currency_id.symbol"/>
+                                        <t t-out="'%.2f' % submission.purchase_price"/>
+                                    </span>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">MRP</span>
+                                    <span class="otm-info-row-value">
+                                        <t t-out="submission.currency_id.symbol"/>
+                                        <t t-out="'%.2f' % submission.mrp"/>
+                                    </span>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Min Order Qty</span>
+                                    <span class="otm-info-row-value" t-out="'%g' % submission.min_order_qty"/>
+                                </div>
+                                <div class="otm-info-row">
+                                    <span class="otm-info-row-label">Available Qty</span>
+                                    <span class="otm-info-row-value" t-out="'%g' % submission.available_qty"/>
+                                </div>
+                            </div>
+                            <div t-if="submission.description" class="otm-form-section" t-out="submission.description"/>
                         </t>
                     </div>
                 </div>
@@ -419,128 +646,170 @@
         <form t-att-action="form_action" method="post"
               class="otm-product-form otm-single-submit">
             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-            <div class="row g-2">
-                <div class="col-12">
-                    <label class="form-label">Product Name *</label>
-                    <input type="text" name="name" class="form-control" required="required"
-                           t-att-value="submission.name if submission else ''"/>
+
+            <div class="otm-form-section">
+                <div class="otm-form-section-title">
+                    <i class="bi bi-card-text"/> Basic Information
                 </div>
-                <div class="col-6">
-                    <label class="form-label">Vendor SKU</label>
-                    <input type="text" name="vendor_sku" class="form-control"
-                           t-att-value="submission.vendor_sku if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Brand</label>
-                    <input type="text" name="brand" class="form-control"
-                           t-att-value="submission.brand if submission else ''"/>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Main Category</label>
-                    <select name="primary_category_id" class="form-select">
-                        <option value="">-- Select --</option>
-                        <t t-foreach="categories" t-as="category">
-                            <option t-att-value="category.id"
-                                    t-att-selected="'selected' if submission and submission.primary_category_id.id == category.id else None"
-                                    t-out="category.complete_name"/>
-                        </t>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">All Categories (select multiple)</label>
-                    <select name="category_ids" class="form-select" multiple="multiple" size="5">
-                        <t t-foreach="categories" t-as="category">
-                            <option t-att-value="category.id"
-                                    t-att-selected="'selected' if submission and category.id in submission.category_ids.ids else None"
-                                    t-out="category.complete_name"/>
-                        </t>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Material / Fabric</label>
-                    <input type="text" name="material" class="form-control"
-                           t-att-value="submission.material if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Color</label>
-                    <input type="text" name="color" class="form-control"
-                           t-att-value="submission.color if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Size</label>
-                    <input type="text" name="size" class="form-control"
-                           t-att-value="submission.size if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Available Sizes</label>
-                    <input type="text" name="available_sizes" class="form-control"
-                           placeholder="S, M, L, XL"
-                           t-att-value="submission.available_sizes if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Gender</label>
-                    <select name="gender" class="form-select">
-                        <option value="">--</option>
-                        <t t-foreach="[('women', 'Women'), ('men', 'Men'), ('girls', 'Girls'), ('boys', 'Boys'), ('unisex', 'Unisex')]"
-                           t-as="opt">
-                            <option t-att-value="opt[0]"
-                                    t-att-selected="'selected' if submission and submission.gender == opt[0] else None"
-                                    t-out="opt[1]"/>
-                        </t>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Season</label>
-                    <select name="season" class="form-select">
-                        <option value="">--</option>
-                        <t t-foreach="[('summer', 'Summer'), ('winter', 'Winter'), ('monsoon', 'Monsoon'), ('all', 'All Season')]"
-                           t-as="opt">
-                            <option t-att-value="opt[0]"
-                                    t-att-selected="'selected' if submission and submission.season == opt[0] else None"
-                                    t-out="opt[1]"/>
-                        </t>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Style</label>
-                    <input type="text" name="style" class="form-control"
-                           t-att-value="submission.style if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Purchase Price *</label>
-                    <input type="number" step="0.01" min="0" name="purchase_price"
-                           class="form-control" required="required"
-                           t-att-value="submission.purchase_price if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">MRP</label>
-                    <input type="number" step="0.01" min="0" name="mrp" class="form-control"
-                           t-att-value="submission.mrp if submission else ''"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Min Order Qty</label>
-                    <input type="number" step="1" min="0" name="min_order_qty"
-                           class="form-control"
-                           t-att-value="submission.min_order_qty if submission else 1"/>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Available Qty</label>
-                    <input type="number" step="1" min="0" name="available_qty"
-                           class="form-control"
-                           t-att-value="submission.available_qty if submission else ''"/>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="3"><t
-                        t-out="submission.description if submission else ''"/></textarea>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Notes to Purchase Manager</label>
-                    <textarea name="vendor_notes" class="form-control" rows="2"><t
-                        t-out="submission.vendor_notes if submission else ''"/></textarea>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <label class="form-label">Product Name *</label>
+                        <input type="text" name="name" class="form-control" required="required"
+                               t-att-value="submission.name if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Vendor SKU</label>
+                        <input type="text" name="vendor_sku" class="form-control"
+                               t-att-value="submission.vendor_sku if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Brand</label>
+                        <input type="text" name="brand" class="form-control"
+                               t-att-value="submission.brand if submission else ''"/>
+                    </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-3 w-100">Save</button>
+
+            <div class="otm-form-section">
+                <div class="otm-form-section-title">
+                    <i class="bi bi-tags"/> Classification
+                </div>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <label class="form-label">Main Category</label>
+                        <select name="primary_category_id" class="form-select">
+                            <option value="">-- Select --</option>
+                            <t t-foreach="categories" t-as="category">
+                                <option t-att-value="category.id"
+                                        t-att-selected="'selected' if submission and submission.primary_category_id.id == category.id else None"
+                                        t-out="category.complete_name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">All Categories (select multiple)</label>
+                        <select name="category_ids" class="form-select" multiple="multiple" size="5">
+                            <t t-foreach="categories" t-as="category">
+                                <option t-att-value="category.id"
+                                        t-att-selected="'selected' if submission and category.id in submission.category_ids.ids else None"
+                                        t-out="category.complete_name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Gender</label>
+                        <select name="gender" class="form-select">
+                            <option value="">--</option>
+                            <t t-foreach="[('women', 'Women'), ('men', 'Men'), ('girls', 'Girls'), ('boys', 'Boys'), ('unisex', 'Unisex')]"
+                               t-as="opt">
+                                <option t-att-value="opt[0]"
+                                        t-att-selected="'selected' if submission and submission.gender == opt[0] else None"
+                                        t-out="opt[1]"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Season</label>
+                        <select name="season" class="form-select">
+                            <option value="">--</option>
+                            <t t-foreach="[('summer', 'Summer'), ('winter', 'Winter'), ('monsoon', 'Monsoon'), ('all', 'All Season')]"
+                               t-as="opt">
+                                <option t-att-value="opt[0]"
+                                        t-att-selected="'selected' if submission and submission.season == opt[0] else None"
+                                        t-out="opt[1]"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Style</label>
+                        <input type="text" name="style" class="form-control"
+                               t-att-value="submission.style if submission else ''"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="otm-form-section">
+                <div class="otm-form-section-title">
+                    <i class="bi bi-rulers"/> Product Specifications
+                </div>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="form-label">Material / Fabric</label>
+                        <input type="text" name="material" class="form-control"
+                               t-att-value="submission.material if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Color</label>
+                        <input type="text" name="color" class="form-control"
+                               t-att-value="submission.color if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Size</label>
+                        <input type="text" name="size" class="form-control"
+                               t-att-value="submission.size if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Available Sizes</label>
+                        <input type="text" name="available_sizes" class="form-control"
+                               placeholder="S, M, L, XL"
+                               t-att-value="submission.available_sizes if submission else ''"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="otm-form-section">
+                <div class="otm-form-section-title">
+                    <i class="bi bi-currency-rupee"/> Pricing &amp; Inventory
+                </div>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="form-label">Purchase Price *</label>
+                        <input type="number" step="0.01" min="0" name="purchase_price"
+                               class="form-control" required="required" inputmode="decimal"
+                               t-att-value="submission.purchase_price if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">MRP</label>
+                        <input type="number" step="0.01" min="0" name="mrp" class="form-control"
+                               inputmode="decimal"
+                               t-att-value="submission.mrp if submission else ''"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Min Order Qty</label>
+                        <input type="number" step="1" min="0" name="min_order_qty"
+                               class="form-control" inputmode="numeric"
+                               t-att-value="submission.min_order_qty if submission else 1"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Available Qty</label>
+                        <input type="number" step="1" min="0" name="available_qty"
+                               class="form-control" inputmode="numeric"
+                               t-att-value="submission.available_qty if submission else ''"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="otm-form-section">
+                <div class="otm-form-section-title">
+                    <i class="bi bi-chat-square-text"/> Additional Information
+                </div>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3"><t
+                            t-out="submission.description if submission else ''"/></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Notes to Purchase Manager</label>
+                        <textarea name="vendor_notes" class="form-control" rows="2"><t
+                            t-out="submission.vendor_notes if submission else ''"/></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-check2 me-1"/> Save
+            </button>
         </form>
     </template>
 
@@ -549,136 +818,185 @@
         <t t-call="portal.portal_layout">
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <h3>Upload New Product</h3>
-                <p class="text-muted">
-                    Fill in the details and add one or more photos below,
-                    then tap Save — the product and its images are created
-                    together in one step.
-                </p>
+                <div class="otm-page-header">
+                    <h3 class="otm-page-title">Upload New Product</h3>
+                    <p class="otm-page-subtitle">
+                        Fill in the details and add one or more photos below,
+                        then tap Save — the product and its images are created
+                        together in one step.
+                    </p>
+                </div>
                 <div class="col-12 col-lg-8">
                     <form action="/my/vendor/product/create" method="post"
                           enctype="multipart/form-data"
                           class="otm-product-form otm-single-submit">
                         <input type="hidden" name="csrf_token"
                                t-att-value="request.csrf_token()"/>
-                        <div class="row g-2">
-                            <div class="col-12">
-                                <label class="form-label">Product Name *</label>
-                                <input type="text" name="name" class="form-control"
-                                       required="required"/>
+
+                        <div class="otm-form-section">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-card-text"/> Basic Information
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Vendor SKU</label>
-                                <input type="text" name="vendor_sku" class="form-control"/>
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label">Product Name *</label>
+                                    <input type="text" name="name" class="form-control"
+                                           required="required"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Vendor SKU</label>
+                                    <input type="text" name="vendor_sku" class="form-control"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Brand</label>
+                                    <input type="text" name="brand" class="form-control"/>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Brand</label>
-                                <input type="text" name="brand" class="form-control"/>
+                        </div>
+
+                        <div class="otm-form-section">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-tags"/> Classification
                             </div>
-                            <div class="col-12">
-                                <label class="form-label">Main Category</label>
-                                <select name="primary_category_id" class="form-select">
-                                    <option value="">-- Select --</option>
-                                    <t t-foreach="categories" t-as="category">
-                                        <option t-att-value="category.id"
-                                                t-out="category.complete_name"/>
-                                    </t>
-                                </select>
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label">Main Category</label>
+                                    <select name="primary_category_id" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        <t t-foreach="categories" t-as="category">
+                                            <option t-att-value="category.id"
+                                                    t-out="category.complete_name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">All Categories (select multiple)</label>
+                                    <select name="category_ids" class="form-select"
+                                            multiple="multiple" size="5">
+                                        <t t-foreach="categories" t-as="category">
+                                            <option t-att-value="category.id"
+                                                    t-out="category.complete_name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Gender</label>
+                                    <select name="gender" class="form-select">
+                                        <option value="">--</option>
+                                        <t t-foreach="[('women', 'Women'), ('men', 'Men'), ('girls', 'Girls'), ('boys', 'Boys'), ('unisex', 'Unisex')]"
+                                           t-as="opt">
+                                            <option t-att-value="opt[0]" t-out="opt[1]"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Season</label>
+                                    <select name="season" class="form-select">
+                                        <option value="">--</option>
+                                        <t t-foreach="[('summer', 'Summer'), ('winter', 'Winter'), ('monsoon', 'Monsoon'), ('all', 'All Season')]"
+                                           t-as="opt">
+                                            <option t-att-value="opt[0]" t-out="opt[1]"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Style</label>
+                                    <input type="text" name="style" class="form-control"/>
+                                </div>
                             </div>
-                            <div class="col-12">
-                                <label class="form-label">All Categories (select multiple)</label>
-                                <select name="category_ids" class="form-select"
-                                        multiple="multiple" size="5">
-                                    <t t-foreach="categories" t-as="category">
-                                        <option t-att-value="category.id"
-                                                t-out="category.complete_name"/>
-                                    </t>
-                                </select>
+                        </div>
+
+                        <div class="otm-form-section">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-rulers"/> Product Specifications
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Material / Fabric</label>
-                                <input type="text" name="material" class="form-control"/>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">Material / Fabric</label>
+                                    <input type="text" name="material" class="form-control"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Color</label>
+                                    <input type="text" name="color" class="form-control"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Size</label>
+                                    <input type="text" name="size" class="form-control"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Available Sizes</label>
+                                    <input type="text" name="available_sizes"
+                                           class="form-control" placeholder="S, M, L, XL"/>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Color</label>
-                                <input type="text" name="color" class="form-control"/>
+                        </div>
+
+                        <div class="otm-form-section">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-currency-rupee"/> Pricing &amp; Inventory
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Size</label>
-                                <input type="text" name="size" class="form-control"/>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">Purchase Price *</label>
+                                    <input type="number" step="0.01" min="0"
+                                           name="purchase_price" class="form-control"
+                                           required="required" inputmode="decimal"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">MRP</label>
+                                    <input type="number" step="0.01" min="0"
+                                           name="mrp" class="form-control" inputmode="decimal"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Min Order Qty</label>
+                                    <input type="number" step="1" min="0"
+                                           name="min_order_qty" class="form-control"
+                                           inputmode="numeric" value="1"/>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Available Qty</label>
+                                    <input type="number" step="1" min="0"
+                                           name="available_qty" class="form-control"
+                                           inputmode="numeric"/>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Available Sizes</label>
-                                <input type="text" name="available_sizes"
-                                       class="form-control" placeholder="S, M, L, XL"/>
+                        </div>
+
+                        <div class="otm-form-section">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-chat-square-text"/> Additional Information
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Gender</label>
-                                <select name="gender" class="form-select">
-                                    <option value="">--</option>
-                                    <t t-foreach="[('women', 'Women'), ('men', 'Men'), ('girls', 'Girls'), ('boys', 'Boys'), ('unisex', 'Unisex')]"
-                                       t-as="opt">
-                                        <option t-att-value="opt[0]" t-out="opt[1]"/>
-                                    </t>
-                                </select>
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="description" class="form-control" rows="3"/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Notes to Purchase Manager</label>
+                                    <textarea name="vendor_notes" class="form-control" rows="2"/>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Season</label>
-                                <select name="season" class="form-select">
-                                    <option value="">--</option>
-                                    <t t-foreach="[('summer', 'Summer'), ('winter', 'Winter'), ('monsoon', 'Monsoon'), ('all', 'All Season')]"
-                                       t-as="opt">
-                                        <option t-att-value="opt[0]" t-out="opt[1]"/>
-                                    </t>
-                                </select>
+                        </div>
+
+                        <div class="otm-form-section">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-images"/> Product Images
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">Style</label>
-                                <input type="text" name="style" class="form-control"/>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Purchase Price *</label>
-                                <input type="number" step="0.01" min="0"
-                                       name="purchase_price" class="form-control"
-                                       required="required"/>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">MRP</label>
-                                <input type="number" step="0.01" min="0"
-                                       name="mrp" class="form-control"/>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Min Order Qty</label>
-                                <input type="number" step="1" min="0"
-                                       name="min_order_qty" class="form-control"
-                                       value="1"/>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Available Qty</label>
-                                <input type="number" step="1" min="0"
-                                       name="available_qty" class="form-control"/>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="3"/>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Notes to Purchase Manager</label>
-                                <textarea name="vendor_notes" class="form-control" rows="2"/>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Product Images</label>
+                            <div class="otm-dropzone rounded p-4 text-center">
+                                <i class="bi bi-cloud-arrow-up otm-dropzone-icon d-block"/>
+                                <div class="fw-semibold mb-1">Choose product images</div>
                                 <input type="file" name="images" class="form-control"
                                        accept="image/jpeg,image/png,image/webp"
                                        capture="environment" multiple="multiple"/>
                                 <div class="form-text">
-                                    Add one or more photos now, or skip this
+                                    JPG, PNG or WEBP. Add photos now, or skip this
                                     and add them from the product page after saving.
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3 w-100">
-                            Save Product
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check2 me-1"/> Save Product
                         </button>
                     </form>
                 </div>
@@ -691,40 +1009,215 @@
     <!-- Fallback path in case a vendor's browser is stuck on a stale -->
     <!-- cached asset bundle: pure HTML form + native browser submit. -->
     <!-- ============================================================ -->
+    <!-- ============================================================ -->
+    <!-- Bulk upload (JavaScript-driven, with live grouping)          -->
+    <!-- ============================================================ -->
+    <template id="portal_vendor_bulk_upload" name="Vendor Bulk Upload">
+        <t t-call="portal.portal_layout">
+            <div class="container otm-vendor-portal">
+                <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
+                <div class="otm-page-header">
+                    <h3 class="otm-page-title">Bulk Image Upload</h3>
+                    <p class="otm-page-subtitle">
+                        Upload many images at once — no need to create a product
+                        first. Once uploaded, group the images below and give
+                        each group a name and price to turn it into a product.
+                        Duplicates are checked automatically.
+                        Maximum <t t-out="max_upload_mb"/> MB per image.
+                    </p>
+                </div>
+
+                <div class="otm-steps">
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">1</span> Upload Images
+                    </span>
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">2</span> Review Duplicates
+                    </span>
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">3</span> Group Images
+                    </span>
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">4</span> Create Products
+                    </span>
+                </div>
+
+                <div id="otm_bulk_upload" class="otm-upload-panel"
+                     data-batch-create-url="/my/vendor/upload/batch/create"
+                     data-batch-finish-url-tpl="/my/vendor/upload/batch/BATCH_ID/finish"
+                     data-batch-image-url-tpl="/my/vendor/upload/batch/BATCH_ID/image"
+                     data-batch-images-url-tpl="/my/vendor/upload/batch/BATCH_ID/images"
+                     data-quick-create-url="/my/vendor/product/quick-create"
+                     t-att-data-csrf="request.csrf_token()"
+                     t-att-data-max-mb="max_upload_mb">
+
+                    <!-- Touch-friendly picker; drag-and-drop is a desktop extra -->
+                    <div class="otm-dropzone rounded p-4 text-center">
+                        <i class="bi bi-cloud-arrow-up otm-dropzone-icon d-block"/>
+                        <div class="mb-2 fw-semibold">Tap to choose photos from your gallery or camera</div>
+                        <input type="file" id="otm_bulk_files" class="form-control"
+                               accept="image/jpeg,image/png,image/webp"
+                               capture="environment" multiple="multiple"/>
+                        <div class="small text-muted mt-1 d-none d-md-block">
+                            Desktop: you can also drag &amp; drop images here.
+                        </div>
+                    </div>
+
+                    <div id="otm_bulk_previews" class="row g-2 mt-2"></div>
+
+                    <div class="progress mt-3 d-none" id="otm_bulk_progress_wrap">
+                        <div class="progress-bar" id="otm_bulk_progress"
+                             role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                    <div id="otm_bulk_status" class="small text-muted mt-1"></div>
+
+                    <button type="button" id="otm_bulk_start"
+                            class="btn btn-primary btn-lg w-100 mt-3"
+                            disabled="disabled">
+                        <i class="bi bi-cloud-arrow-up me-1"/> Upload All Images
+                    </button>
+
+                    <div id="otm_bulk_result" class="mt-3 d-none">
+                        <div class="otm-outcome-panel otm-outcome-success">
+                            <div>Batch: <strong id="otm_res_batch"></strong></div>
+                            <div>Total: <span id="otm_res_total"></span> &#8226;
+                                 New: <span id="otm_res_new"></span> &#8226;
+                                 Exact duplicates: <span id="otm_res_exact"></span> &#8226;
+                                 Possible duplicates: <span id="otm_res_possible"></span></div>
+                            <div id="otm_res_processing" class="d-none mt-1">
+                                Large batch queued — duplicate analysis continues in the
+                                background. Refresh this section shortly, or check
+                                <a href="/my/vendor/batches">Upload History</a>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grouping step: shown after upload finishes -->
+                    <div id="otm_group_section" class="mt-4 d-none">
+                        <h5>Group Images Into Products</h5>
+                        <p class="text-muted small">
+                            Tap the images that belong to the same product, then tap
+                            "Create Product from Selected". Repeat until every image
+                            is assigned. Images flagged as duplicates are best
+                            reviewed before creating a product from them.
+                        </p>
+                        <div id="otm_group_grid" class="row g-2"></div>
+                        <div class="d-flex align-items-center gap-2 mt-3 sticky-bottom bg-white py-2">
+                            <span class="small text-muted flex-grow-1">
+                                <span id="otm_group_selected_count">0</span> image(s) selected
+                            </span>
+                            <button type="button" id="otm_group_create_btn"
+                                    class="btn btn-success" disabled="disabled">
+                                Create Product from Selected
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick product modal -->
+                    <div id="otm_quick_modal" class="otm-quick-modal"
+                         t-att-data-categories="json.dumps([
+                            {'id': c.id, 'name': c.name,
+                             'parent_id': c.parent_id.id or None}
+                            for c in categories])">
+                        <div class="otm-quick-modal-panel">
+                            <h5>New Product</h5>
+                            <div class="mb-2">
+                                <label class="form-label">Product Name *</label>
+                                <input type="text" id="otm_quick_name"
+                                       class="form-control" required="required"
+                                       placeholder="e.g. Floral Cotton Maxi Dress"/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Main Category</label>
+                                <select id="otm_quick_main_category"
+                                        class="form-select">
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Subcategory</label>
+                                <select id="otm_quick_subcategory"
+                                        class="form-select" disabled="disabled">
+                                    <option value="">-- Select main category first --</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Purchase Price</label>
+                                <input type="number" id="otm_quick_price"
+                                       class="form-control" min="0" step="0.01"/>
+                            </div>
+                            <p class="small text-muted">
+                                You can add sizes, brand and other details
+                                afterwards from My Products.
+                            </p>
+                            <div class="d-grid gap-2">
+                                <button type="button" id="otm_quick_confirm"
+                                        class="btn btn-success btn-lg">Create Product</button>
+                                <button type="button"
+                                        class="btn btn-outline-secondary otm-quick-cancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
     <template id="portal_vendor_simple_bulk_upload" name="Vendor Simple Bulk Upload (No JS)">
         <t t-call="portal.portal_layout">
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <h3>Bulk Image Upload (Simple)</h3>
-                <p class="text-muted">
-                    Works without JavaScript — pick your photos and tap
-                    Upload. After uploading, you'll group the images into
-                    products on the next page. Maximum
-                    <t t-out="max_upload_mb"/> MB per image.
-                </p>
-                <div class="alert alert-warning"
+                <div class="otm-page-header">
+                    <h3 class="otm-page-title">Bulk Image Upload (Simple)</h3>
+                    <p class="otm-page-subtitle">
+                        Works without JavaScript — pick your photos and tap
+                        Upload. Maximum <t t-out="max_upload_mb"/> MB per image.
+                    </p>
+                </div>
+
+                <div class="otm-steps">
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">1</span> Upload Images
+                    </span>
+                    <span class="otm-step-chip">
+                        <span class="otm-step-num">2</span> Review Duplicates
+                    </span>
+                    <span class="otm-step-chip">
+                        <span class="otm-step-num">3</span> Group Images
+                    </span>
+                    <span class="otm-step-chip">
+                        <span class="otm-step-num">4</span> Create Products
+                    </span>
+                </div>
+
+                <div class="otm-outcome-panel otm-outcome-warning"
                      t-if="request.params.get('error') == 'nofiles'">
+                    <i class="bi bi-exclamation-triangle me-1"/>
                     Please choose at least one image before uploading.
                 </div>
-                <form action="/my/vendor/upload/simple/submit" method="post"
-                      enctype="multipart/form-data" class="col-12 col-lg-8">
-                    <input type="hidden" name="csrf_token"
-                           t-att-value="request.csrf_token()"/>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Choose Photos</label>
-                        <input type="file" name="images" class="form-control"
-                               accept="image/jpeg,image/png,image/webp"
-                               capture="environment" multiple="multiple"
-                               required="required"/>
-                        <div class="form-text">
-                            Your browser will not let you submit without
-                            selecting at least one file — no extra checks needed.
+
+                <div class="otm-upload-panel col-12 col-lg-8">
+                    <form action="/my/vendor/upload/simple/submit" method="post"
+                          enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token"
+                               t-att-value="request.csrf_token()"/>
+                        <div class="otm-dropzone rounded p-4 text-center mb-3">
+                            <i class="bi bi-cloud-arrow-up otm-dropzone-icon d-block"/>
+                            <label class="form-label fw-semibold">Choose Photos</label>
+                            <input type="file" name="images" class="form-control"
+                                   accept="image/jpeg,image/png,image/webp"
+                                   capture="environment" multiple="multiple"
+                                   required="required"/>
+                            <div class="form-text">
+                                Your browser will not let you submit without
+                                selecting at least one file — no extra checks needed.
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                        Upload Images
-                    </button>
-                </form>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-cloud-arrow-up me-1"/> Upload Images
+                        </button>
+                    </form>
+                </div>
             </div>
         </t>
     </template>
@@ -735,20 +1228,40 @@
         <t t-call="portal.portal_layout">
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <h3>Group Images Into Products</h3>
-                <div class="alert alert-success" t-if="request.params.get('created')">
+                <div class="otm-page-header">
+                    <h3 class="otm-page-title">Group Images Into Products</h3>
+                    <p class="otm-page-subtitle">
+                        Tick the images that belong to one product, name it below,
+                        and tap Create Product. Repeat for the rest — nothing is
+                        lost if you leave images ungrouped for now.
+                    </p>
+                </div>
+
+                <div class="otm-steps">
+                    <span class="otm-step-chip">
+                        <span class="otm-step-num">1</span> Upload Images
+                    </span>
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">2</span> Review Duplicates
+                    </span>
+                    <span class="otm-step-chip otm-step-active">
+                        <span class="otm-step-num">3</span> Group Images
+                    </span>
+                    <span class="otm-step-chip">
+                        <span class="otm-step-num">4</span> Create Products
+                    </span>
+                </div>
+
+                <div class="otm-outcome-panel otm-outcome-success" t-if="request.params.get('created')">
+                    <i class="bi bi-check-circle me-1"/>
                     Product created. Continue grouping the remaining images below,
                     or leave the rest for later — they'll still be here.
                 </div>
-                <div class="alert alert-warning"
+                <div class="otm-outcome-panel otm-outcome-warning"
                      t-if="request.params.get('error') == 'missing'">
+                    <i class="bi bi-exclamation-triangle me-1"/>
                     Enter a product name and select at least one image.
                 </div>
-                <p class="text-muted">
-                    Tick the images that belong to one product, name it below,
-                    and tap Create Product. Repeat for the rest — nothing is
-                    lost if you leave images ungrouped for now.
-                </p>
 
                 <t t-if="images">
                     <form action="/my/vendor/upload/simple/create-product"
@@ -759,55 +1272,74 @@
                         <div class="row g-2 mb-3">
                             <div t-foreach="images" t-as="image"
                                  class="col-4 col-md-2">
-                                <label class="d-block position-relative">
+                                <label class="otm-simple-group-tile">
                                     <input type="checkbox" name="image_ids"
-                                           t-att-value="image.id"
-                                           class="form-check-input position-absolute m-2"/>
+                                           t-att-value="image.id"/>
                                     <img loading="lazy"
                                          t-attf-src="/web/image/otm.vendor.product.image/#{image.id}/image_256"
-                                         class="img-fluid rounded w-100"
+                                         class="img-fluid w-100"
                                          style="aspect-ratio: 1/1; object-fit: cover;"
                                          t-att-alt="image.name"/>
-                                    <span t-if="image.duplicate_status in ('exact_duplicate', 'possible_duplicate', 'similar')"
-                                          class="badge text-bg-warning d-block mt-1">
-                                        Possible duplicate
+                                    <span t-if="image.duplicate_status == 'exact_duplicate'"
+                                          class="otm-dup-badge otm-dup-exact d-block mt-1 text-center">
+                                        <i class="bi bi-exclamation-octagon"/> Exact duplicate
+                                    </span>
+                                    <span t-elif="image.duplicate_status == 'possible_duplicate'"
+                                          class="otm-dup-badge otm-dup-possible d-block mt-1 text-center">
+                                        <i class="bi bi-exclamation-triangle"/> Possible duplicate
+                                    </span>
+                                    <span t-elif="image.duplicate_status == 'similar'"
+                                          class="otm-dup-badge otm-dup-similar d-block mt-1 text-center">
+                                        <i class="bi bi-info-circle"/> Similar image
                                     </span>
                                 </label>
                             </div>
                         </div>
 
-                        <div class="row g-2 col-12 col-lg-6">
-                            <div class="col-12">
-                                <label class="form-label">Product Name *</label>
-                                <input type="text" name="name" class="form-control"
-                                       required="required"/>
+                        <div class="otm-form-section col-12 col-lg-6">
+                            <div class="otm-form-section-title">
+                                <i class="bi bi-box-seam"/> New Product From Selection
                             </div>
-                            <div class="col-12">
-                                <label class="form-label">Category</label>
-                                <select name="primary_category_id" class="form-select">
-                                    <option value="">-- Select --</option>
-                                    <t t-foreach="categories" t-as="category">
-                                        <option t-att-value="category.id"
-                                                t-out="category.complete_name"/>
-                                    </t>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Purchase Price</label>
-                                <input type="number" name="purchase_price"
-                                       class="form-control" min="0" step="0.01"/>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-success btn-lg w-100">
-                                    Create Product From Checked Images
-                                </button>
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label">Product Name *</label>
+                                    <input type="text" name="name" class="form-control"
+                                           required="required"/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Category</label>
+                                    <select name="primary_category_id" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        <t t-foreach="categories" t-as="category">
+                                            <option t-att-value="category.id"
+                                                    t-out="category.complete_name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Purchase Price</label>
+                                    <input type="number" name="purchase_price"
+                                           class="form-control" min="0" step="0.01"/>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-success btn-lg w-100">
+                                        <i class="bi bi-check2 me-1"/>
+                                        Create Product From Checked Images
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </t>
-                <div t-else="" class="alert alert-info">
-                    No ungrouped images right now.
-                    <a href="/my/vendor/upload/simple">Upload more photos</a>.
+                <div t-else="" class="otm-empty-state">
+                    <i class="bi bi-images"/>
+                    <div class="otm-empty-state-title">No ungrouped images right now</div>
+                    <div class="otm-empty-state-text">
+                        Once you upload photos, they'll appear here for grouping into products.
+                    </div>
+                    <a href="/my/vendor/upload/simple" class="btn btn-primary btn-sm">
+                        Upload more photos
+                    </a>
                 </div>
             </div>
         </t>
@@ -821,12 +1353,15 @@
         <t t-call="portal.portal_layout">
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <h3>Upload History</h3>
+                <div class="otm-page-header">
+                    <h3 class="otm-page-title">Upload History</h3>
+                    <p class="otm-page-subtitle">A record of every bulk image upload you've made.</p>
+                </div>
                 <t t-if="batches">
-                    <div class="table-responsive">
-                        <table class="table align-middle">
+                    <div class="otm-card p-2">
+                        <table class="otm-batch-table table align-middle mb-0">
                             <thead>
-                                <tr>
+                                <tr class="text-muted small">
                                     <th>Batch</th>
                                     <th>Date</th>
                                     <th class="text-end">Total</th>
@@ -838,26 +1373,58 @@
                             </thead>
                             <tbody>
                                 <tr t-foreach="batches" t-as="batch">
-                                    <td t-out="batch.name"/>
+                                    <td class="fw-semibold" t-out="batch.name"/>
                                     <td t-out="batch.upload_date"
                                         t-options="{'widget': 'datetime'}"/>
                                     <td class="text-end" t-out="batch.total_images"/>
-                                    <td class="text-end text-success" t-out="batch.new_images"/>
-                                    <td class="text-end text-danger" t-out="batch.exact_duplicates"/>
-                                    <td class="text-end text-warning" t-out="batch.possible_duplicates"/>
+                                    <td class="text-end" t-out="batch.new_images"/>
+                                    <td class="text-end" t-out="batch.exact_duplicates"/>
+                                    <td class="text-end" t-out="batch.possible_duplicates"/>
                                     <td>
-                                        <span class="badge text-bg-light"
+                                        <t t-set="otm_batch_state_classes" t-value="{
+                                            'draft': 'otm-badge-draft', 'uploading': 'otm-badge-submitted',
+                                            'processing': 'otm-badge-under_review', 'done': 'otm-badge-selected',
+                                            'failed': 'otm-badge-rejected'}"/>
+                                        <span t-attf-class="otm-badge #{otm_batch_state_classes.get(batch.state, 'otm-badge-draft')}"
                                               t-out="dict(batch._fields['state']._description_selection(batch.env)).get(batch.state)"/>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="otm-batch-cards">
+                            <div t-foreach="batches" t-as="batch" class="otm-batch-card">
+                                <div class="otm-batch-card-top">
+                                    <span class="otm-batch-card-name" t-out="batch.name"/>
+                                    <t t-set="otm_batch_state_classes" t-value="{
+                                        'draft': 'otm-badge-draft', 'uploading': 'otm-badge-submitted',
+                                        'processing': 'otm-badge-under_review', 'done': 'otm-badge-selected',
+                                        'failed': 'otm-badge-rejected'}"/>
+                                    <span t-attf-class="otm-badge #{otm_batch_state_classes.get(batch.state, 'otm-badge-draft')}"
+                                          t-out="dict(batch._fields['state']._description_selection(batch.env)).get(batch.state)"/>
+                                </div>
+                                <div class="text-muted small mb-1" t-out="batch.upload_date"
+                                     t-options="{'widget': 'datetime'}"/>
+                                <div class="otm-batch-card-stats">
+                                    <span>Total: <strong t-out="batch.total_images"/></span>
+                                    <span>New: <strong t-out="batch.new_images"/></span>
+                                    <span>Exact: <strong t-out="batch.exact_duplicates"/></span>
+                                    <span>Possible: <strong t-out="batch.possible_duplicates"/></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="o_portal_pager d-flex justify-content-center">
+                    <div class="o_portal_pager d-flex justify-content-center mt-3">
                         <t t-call="portal.pager"/>
                     </div>
                 </t>
-                <div t-else="" class="alert alert-info">No upload batches yet.</div>
+                <div t-else="" class="otm-empty-state">
+                    <i class="bi bi-clock-history"/>
+                    <div class="otm-empty-state-title">No upload batches yet</div>
+                    <div class="otm-empty-state-text">
+                        Bulk-upload some product photos and they'll show up here.
+                    </div>
+                    <a href="/my/vendor/upload" class="btn btn-primary btn-sm">Bulk Upload</a>
+                </div>
             </div>
         </t>
     </template>
@@ -869,34 +1436,75 @@
         <t t-call="portal.portal_layout">
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
-                <h3>My Vendor Profile</h3>
-                <div class="card col-12 col-lg-8">
-                    <div class="card-body">
-                        <table class="table table-sm mb-0">
-                            <tbody>
-                                <tr><th class="w-25">Vendor Code</th>
-                                    <td t-out="vendor.otm_vendor_code"/></tr>
-                                <tr><th>Name</th><td t-out="vendor.display_name"/></tr>
-                                <tr><th>Company</th>
-                                    <td t-out="vendor.parent_id.name or vendor.company_name"/></tr>
-                                <tr><th>Email</th><td t-out="vendor.email"/></tr>
-                                <tr><th>Mobile</th><td t-out="vendor.mobile or vendor.phone"/></tr>
-                                <tr><th>WhatsApp</th><td t-out="vendor.otm_vendor_whatsapp"/></tr>
-                                <tr><th>GST / Tax ID</th><td t-out="vendor.vat"/></tr>
-                                <tr><th>Address</th>
-                                    <td>
-                                        <t t-out="vendor.street"/>
-                                        <t t-if="vendor.city">, <t t-out="vendor.city"/></t>
-                                        <t t-if="vendor.state_id">, <t t-out="vendor.state_id.name"/></t>
-                                        <t t-if="vendor.country_id">, <t t-out="vendor.country_id.name"/></t>
-                                    </td></tr>
-                                <tr><th>Registered On</th>
-                                    <td t-out="vendor.otm_vendor_registration_date"/></tr>
-                            </tbody>
-                        </table>
-                        <p class="text-muted small mt-2 mb-0">
-                            To update your profile details, please contact the purchase team.
-                        </p>
+                <div class="otm-page-header">
+                    <h3 class="otm-page-title">My Vendor Profile</h3>
+                </div>
+
+                <div class="col-12 col-lg-8">
+                    <div class="otm-form-section">
+                        <div class="otm-profile-header">
+                            <div class="otm-profile-avatar">
+                                <t t-out="(vendor.name or '?')[0].upper()"/>
+                            </div>
+                            <div>
+                                <div class="otm-profile-name" t-out="vendor.display_name"/>
+                                <span class="otm-profile-code-badge">
+                                    <i class="bi bi-upc-scan"/>
+                                    <t t-out="vendor.otm_vendor_code"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="otm-form-section">
+                        <div class="otm-form-section-title">
+                            <i class="bi bi-building"/> Business Information
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">Company</span>
+                            <span class="otm-info-row-value"
+                                  t-out="vendor.parent_id.name or vendor.company_name"/>
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">GST / Tax ID</span>
+                            <span class="otm-info-row-value" t-out="vendor.vat"/>
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">Registered On</span>
+                            <span class="otm-info-row-value" t-out="vendor.otm_vendor_registration_date"/>
+                        </div>
+                    </div>
+
+                    <div class="otm-form-section">
+                        <div class="otm-form-section-title">
+                            <i class="bi bi-person-lines-fill"/> Contact Information
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">Email</span>
+                            <span class="otm-info-row-value" t-out="vendor.email"/>
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">Mobile</span>
+                            <span class="otm-info-row-value" t-out="vendor.mobile or vendor.phone"/>
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">WhatsApp</span>
+                            <span class="otm-info-row-value" t-out="vendor.otm_vendor_whatsapp"/>
+                        </div>
+                        <div class="otm-info-row">
+                            <span class="otm-info-row-label">Address</span>
+                            <span class="otm-info-row-value">
+                                <t t-out="vendor.street"/>
+                                <t t-if="vendor.city">, <t t-out="vendor.city"/></t>
+                                <t t-if="vendor.state_id">, <t t-out="vendor.state_id.name"/></t>
+                                <t t-if="vendor.country_id">, <t t-out="vendor.country_id.name"/></t>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="otm-info-notice">
+                        <i class="bi bi-info-circle"/>
+                        <span>To update your profile details, please contact the purchase team.</span>
                     </div>
                 </div>
             </div>

@@ -1,102 +1,625 @@
 /* Part of Otomater. See LICENSE file for full copyright and licensing details. */
-/* Vendor portal — mobile-first, plain CSS (no SCSS, Odoo 19 asset pipeline). */
+/* Vendor portal design system — plain CSS (no SCSS, Odoo 19 asset
+ * pipeline), scoped entirely to .otm-vendor-portal and otm- classes.
+ * No global Odoo/Bootstrap overrides. */
 
 .otm-vendor-portal {
-    padding-bottom: 2rem;
+    /* ---- Design tokens ------------------------------------------- */
+    --otm-primary: #4f46e5;
+    --otm-primary-dark: #4338ca;
+    --otm-primary-soft: #eef2ff;
+    --otm-bg: #f8f9fb;
+    --otm-surface: #ffffff;
+    --otm-border: #e5e7eb;
+    --otm-text: #1f2937;
+    --otm-text-muted: #6b7280;
+    --otm-success: #16a34a;
+    --otm-success-soft: #ecfdf3;
+    --otm-warning: #d97706;
+    --otm-warning-soft: #fffbeb;
+    --otm-danger: #dc2626;
+    --otm-danger-soft: #fef2f2;
+    --otm-info: #0284c7;
+    --otm-info-soft: #f0f9ff;
+    --otm-slate-soft: #f3f4f6;
+    --otm-radius: 14px;
+    --otm-radius-sm: 10px;
+    --otm-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+    --otm-shadow-hover: 0 4px 10px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.06);
+
+    background-color: var(--otm-bg);
+    color: var(--otm-text);
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+    max-width: 1280px;
+}
+@media (max-width: 576px) {
+    .otm-vendor-portal {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        padding-top: 0.5rem;
+    }
 }
 
-/* Horizontal scrolling nav pills on small screens */
-.otm-vendor-nav .d-flex {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+.otm-vendor-portal h1, .otm-vendor-portal h2, .otm-vendor-portal h3,
+.otm-vendor-portal h4, .otm-vendor-portal h5 {
+    color: var(--otm-text);
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
-.otm-vendor-nav .d-flex::-webkit-scrollbar {
+.otm-vendor-portal .text-muted { color: var(--otm-text-muted) !important; }
+
+/* Generic surface card used across the portal */
+.otm-card {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+}
+
+/* Buttons: soften the default Bootstrap look slightly without fighting it */
+.otm-vendor-portal .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+.otm-vendor-portal .btn-primary {
+    background-color: var(--otm-primary);
+    border-color: var(--otm-primary);
+}
+.otm-vendor-portal .btn-primary:hover,
+.otm-vendor-portal .btn-primary:focus {
+    background-color: var(--otm-primary-dark);
+    border-color: var(--otm-primary-dark);
+}
+.otm-vendor-portal .btn-outline-primary {
+    color: var(--otm-primary);
+    border-color: var(--otm-primary);
+}
+.otm-vendor-portal .btn-outline-primary:hover {
+    background-color: var(--otm-primary);
+    border-color: var(--otm-primary);
+}
+.otm-vendor-portal .form-control,
+.otm-vendor-portal .form-select {
+    border-radius: 10px;
+    border-color: var(--otm-border);
+}
+.otm-vendor-portal .form-control:focus,
+.otm-vendor-portal .form-select:focus {
+    border-color: var(--otm-primary);
+    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+}
+.otm-vendor-portal .form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--otm-text);
+    margin-bottom: 0.3rem;
+}
+
+/* ==================================================================
+   Page header
+   ================================================================== */
+.otm-page-header {
+    margin-bottom: 1.5rem;
+}
+.otm-page-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.15rem;
+}
+.otm-page-subtitle {
+    color: var(--otm-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+.otm-vendor-code-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--otm-text-muted);
+    background: var(--otm-slate-soft);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+}
+
+/* ==================================================================
+   Navigation
+   ================================================================== */
+.otm-vendor-nav {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.otm-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.otm-nav-group + .otm-nav-group {
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--otm-border);
+}
+.otm-nav-group-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--otm-text-muted);
+    padding: 0.25rem 0.6rem;
+}
+.otm-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--otm-radius-sm);
+    color: var(--otm-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+.otm-nav-link .bi {
+    font-size: 1rem;
+    width: 1.1rem;
+    text-align: center;
+    color: var(--otm-text-muted);
+}
+.otm-nav-link:hover {
+    background-color: var(--otm-slate-soft);
+    color: var(--otm-text);
+    text-decoration: none;
+}
+.otm-nav-link:focus-visible {
+    outline: 2px solid var(--otm-primary);
+    outline-offset: 1px;
+}
+.otm-nav-link.otm-active {
+    background-color: var(--otm-primary-soft);
+    color: var(--otm-primary-dark);
+    font-weight: 700;
+}
+.otm-nav-link.otm-active .bi { color: var(--otm-primary-dark); }
+.otm-nav-link.otm-secondary {
+    font-size: 0.8rem;
+    color: var(--otm-text-muted);
+}
+.otm-nav-link.otm-danger-hint .bi { color: var(--otm-danger); }
+.otm-nav-link.otm-success-hint .bi { color: var(--otm-success); }
+
+/* Desktop: sidebar-style nav; Mobile: collapses into a top bar + drawer */
+.otm-nav-desktop { display: none; }
+.otm-nav-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 0.6rem 0.9rem;
+    margin-bottom: 1rem;
+}
+.otm-nav-mobile-bar .otm-nav-mobile-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+.otm-nav-toggle {
+    border: 1px solid var(--otm-border);
+    background: var(--otm-surface);
+    border-radius: 10px;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--otm-text);
+}
+.otm-nav-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
     display: none;
 }
-.otm-vendor-nav .btn {
+.otm-nav-drawer.otm-open { display: block; }
+.otm-nav-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+}
+.otm-nav-drawer-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 82%;
+    max-width: 320px;
+    background: var(--otm-surface);
+    box-shadow: var(--otm-shadow-hover);
+    padding: 1rem;
+    overflow-y: auto;
+}
+.otm-nav-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+.otm-nav-drawer-close {
+    border: none;
+    background: var(--otm-slate-soft);
+    border-radius: 8px;
+    width: 2rem;
+    height: 2rem;
+}
+
+@media (min-width: 992px) {
+    .otm-nav-mobile-bar, .otm-nav-drawer { display: none; }
+    .otm-nav-desktop {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+    .otm-nav-desktop .otm-nav-group {
+        flex: 1 1 0;
+        min-width: 160px;
+    }
+    .otm-nav-desktop .otm-nav-group + .otm-nav-group {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+        border-left: 1px solid var(--otm-border);
+        padding-left: 1.5rem;
+    }
+}
+
+/* ==================================================================
+   KPI / stat cards
+   ================================================================== */
+.otm-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+@media (min-width: 576px) {
+    .otm-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 992px) {
+    .otm-kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 1200px) {
+    .otm-kpi-grid { grid-template-columns: repeat(7, 1fr); }
+}
+.otm-kpi-card {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+a.otm-kpi-card:hover {
+    box-shadow: var(--otm-shadow-hover);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: inherit;
+}
+.otm-kpi-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+.otm-kpi-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1;
+}
+.otm-kpi-label {
+    font-size: 0.78rem;
+    color: var(--otm-text-muted);
+    font-weight: 600;
+}
+/* Icon/value color variants — soft backgrounds, not heavy borders */
+.otm-kpi-primary .otm-kpi-icon { background: var(--otm-primary-soft); color: var(--otm-primary); }
+.otm-kpi-slate .otm-kpi-icon { background: var(--otm-slate-soft); color: #4b5563; }
+.otm-kpi-info .otm-kpi-icon { background: var(--otm-info-soft); color: var(--otm-info); }
+.otm-kpi-success .otm-kpi-icon { background: var(--otm-success-soft); color: var(--otm-success); }
+.otm-kpi-danger .otm-kpi-icon { background: var(--otm-danger-soft); color: var(--otm-danger); }
+.otm-kpi-warning .otm-kpi-icon { background: var(--otm-warning-soft); color: var(--otm-warning); }
+
+/* ==================================================================
+   Status badge system (soft/pastel)
+   ================================================================== */
+.otm-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    line-height: 1.1;
     white-space: nowrap;
 }
+.otm-badge-draft { background: #f1f2f4; color: #4b5563; }
+.otm-badge-submitted { background: #e0f7fa; color: #0e7490; }
+.otm-badge-under_review { background: #e0eaff; color: #3730a3; }
+.otm-badge-duplicate_review { background: #fef3c7; color: #92400e; }
+.otm-badge-changes_requested { background: #ffedd5; color: #c2410c; }
+.otm-badge-selected { background: #dcfce7; color: #15803d; }
+.otm-badge-rejected { background: #fee2e2; color: #b91c1c; }
+.otm-badge-archived { background: #e5e7eb; color: #374151; }
 
-/* Dashboard stat cards */
-.otm-stat-card {
-    transition: transform 0.1s ease;
+/* Duplicate-type badges (distinct from workflow-state badges) */
+.otm-dup-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.22rem 0.5rem;
+    border-radius: 999px;
+    white-space: nowrap;
 }
-.otm-stat-card:active {
-    transform: scale(0.97);
-}
+.otm-dup-exact { background: #fee2e2; color: #b91c1c; }
+.otm-dup-possible { background: #ffedd5; color: #c2410c; }
+.otm-dup-similar { background: #fef3c7; color: #92400e; }
 
-/* Product cards */
-.otm-product-card {
-    overflow: hidden;
-    transition: box-shadow 0.15s ease;
+/* ==================================================================
+   Quick actions
+   ================================================================== */
+.otm-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
 }
-.otm-product-card:hover {
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+@media (min-width: 768px) {
+    .otm-quick-actions { grid-template-columns: repeat(4, 1fr); }
 }
-.otm-card-img-wrap {
+.otm-quick-action {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 1rem 0.85rem;
+    text-align: left;
+    text-decoration: none;
+    color: var(--otm-text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-height: 6.5rem;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+.otm-quick-action:hover {
+    box-shadow: var(--otm-shadow-hover);
+    transform: translateY(-1px);
+    color: var(--otm-text);
+    text-decoration: none;
+}
+.otm-quick-action .bi {
+    font-size: 1.3rem;
+    color: var(--otm-primary);
+}
+.otm-quick-action-label { font-weight: 700; font-size: 0.88rem; }
+
+/* ==================================================================
+   Recent batches (table on desktop, cards on mobile)
+   ================================================================== */
+.otm-batch-table {
+    display: none;
+}
+@media (min-width: 768px) {
+    .otm-batch-table { display: table; width: 100%; }
+    .otm-batch-cards { display: none; }
+}
+.otm-batch-card {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius-sm);
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.6rem;
+}
+.otm-batch-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+.otm-batch-card-name { font-weight: 700; font-size: 0.88rem; }
+.otm-batch-card-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.78rem;
+    color: var(--otm-text-muted);
+}
+.otm-batch-card-stats strong { color: var(--otm-text); }
+
+/* ==================================================================
+   Search / filter toolbar
+   ================================================================== */
+.otm-toolbar {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+.otm-search-wrap {
     position: relative;
 }
+.otm-search-wrap .bi-search {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--otm-text-muted);
+    pointer-events: none;
+}
+.otm-search-wrap input {
+    padding-left: 2.2rem;
+}
+
+/* ==================================================================
+   Product cards / grid
+   ================================================================== */
+.otm-product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+}
+@media (min-width: 576px) {
+    .otm-product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 992px) {
+    .otm-product-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.otm-product-card {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    overflow: hidden;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+.otm-product-card:hover {
+    box-shadow: var(--otm-shadow-hover);
+    transform: translateY(-2px);
+    color: inherit;
+    text-decoration: none;
+}
+.otm-card-img-wrap { position: relative; }
 .otm-card-img {
     width: 100%;
     aspect-ratio: 3 / 4;
     object-fit: cover;
-    background-color: #f2f2f2;
+    background-color: var(--otm-slate-soft);
+    display: block;
 }
 .otm-card-img-placeholder {
     width: 100%;
     aspect-ratio: 3 / 4;
-    background-color: #f2f2f2;
-    font-size: 0.85rem;
+    background-color: var(--otm-slate-soft);
+    color: var(--otm-text-muted);
+    font-size: 0.8rem;
 }
-.otm-dup-badge {
-    position: absolute;
-    top: 0.35rem;
-    right: 0.35rem;
+.otm-card-body { padding: 0.65rem 0.75rem 0.8rem; }
+.otm-card-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--otm-text);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.otm-card-sku {
+    font-size: 0.74rem;
+    color: var(--otm-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.otm-card-price {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--otm-text);
 }
 .otm-main-badge {
     position: absolute;
-    top: 0.35rem;
-    left: 0.35rem;
+    top: 0.5rem;
+    left: 0.5rem;
+    background: rgba(79, 70, 229, 0.92);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+}
+.otm-dup-badge.otm-card-dup-flag {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
 }
 
-/* Image grid on the product detail page */
+/* ==================================================================
+   Image grid on product detail page / thumbs
+   ================================================================== */
 .otm-thumb {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
-    background-color: #f2f2f2;
+    background-color: var(--otm-slate-soft);
+    border-radius: var(--otm-radius-sm);
 }
+.otm-image-cell { position: relative; }
 .otm-img-delete {
     position: absolute;
-    bottom: 0.25rem;
-    right: 0.25rem;
+    bottom: 0.3rem;
+    right: 0.3rem;
     padding: 0 0.45rem;
     line-height: 1.4;
     min-width: 2rem;
-    min-height: 2rem; /* touch-friendly */
+    min-height: 2rem;
+    border-radius: 8px;
 }
 
-/* Upload widgets */
+/* ==================================================================
+   Upload widgets
+   ================================================================== */
+.otm-upload-panel {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 1rem;
+}
 .otm-dropzone {
-    border-style: dashed !important;
-    background-color: #fafafa;
+    border: 2px dashed var(--otm-border) !important;
+    background-color: var(--otm-bg);
+    border-radius: var(--otm-radius);
     cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 .otm-dropzone.otm-dragover {
-    background-color: #eef4ff;
-    border-color: #0d6efd !important;
+    background-color: var(--otm-primary-soft);
+    border-color: var(--otm-primary) !important;
+}
+.otm-dropzone-icon {
+    font-size: 1.8rem;
+    color: var(--otm-primary);
+    margin-bottom: 0.35rem;
 }
 .otm-upload-previews img,
 #otm_bulk_previews img {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
-    border-radius: 0.375rem;
-    background-color: #f2f2f2;
+    border-radius: var(--otm-radius-sm);
+    background-color: var(--otm-slate-soft);
 }
-.otm-preview-cell {
-    position: relative;
-}
+.otm-preview-cell { position: relative; }
 .otm-preview-remove {
     position: absolute;
     top: 0.2rem;
@@ -105,9 +628,10 @@
     min-height: 1.9rem;
     padding: 0;
     line-height: 1.2;
+    border-radius: 8px;
 }
 .otm-preview-cell.otm-preview-error img {
-    outline: 3px solid #dc3545;
+    outline: 3px solid var(--otm-danger);
 }
 .otm-preview-status {
     position: absolute;
@@ -117,7 +641,7 @@
     font-size: 0.65rem;
     text-align: center;
     color: #fff;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(15, 23, 42, 0.65);
     border-radius: 0.25rem;
     padding: 0 0.15rem;
     overflow: hidden;
@@ -126,33 +650,27 @@
 }
 
 /* Prevent double-submit visual feedback */
-.otm-single-submit button[disabled] {
-    opacity: 0.65;
-}
+.otm-single-submit button[disabled] { opacity: 0.65; }
 
-/* Bulk upload: image grouping grid */
-.otm-group-cell {
-    position: relative;
-    cursor: pointer;
-}
+/* ==================================================================
+   Bulk upload: image grouping grid
+   ================================================================== */
+.otm-group-cell { position: relative; cursor: pointer; }
 .otm-group-cell img {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
-    border-radius: 0.375rem;
-    background-color: #f2f2f2;
+    border-radius: var(--otm-radius-sm);
+    background-color: var(--otm-slate-soft);
     border: 3px solid transparent;
+    transition: border-color 0.12s ease;
 }
-.otm-group-cell.otm-group-selected img {
-    border-color: #198754;
-}
-.otm-group-cell.otm-group-assigned img {
-    opacity: 0.45;
-}
+.otm-group-cell.otm-group-selected img { border-color: var(--otm-success); }
+.otm-group-cell.otm-group-assigned img { opacity: 0.4; }
 .otm-group-check {
     position: absolute;
-    top: 0.3rem;
-    left: 0.3rem;
+    top: 0.35rem;
+    left: 0.35rem;
     width: 1.4rem;
     height: 1.4rem;
 }
@@ -164,15 +682,35 @@
     font-size: 0.62rem;
     text-align: center;
     color: #fff;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(15, 23, 42, 0.7);
     border-radius: 0.25rem;
     padding: 0 0.15rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.otm-group-badge.otm-badge-dup {
-    background: rgba(217, 119, 6, 0.85);
+.otm-group-badge.otm-badge-dup { background: rgba(217, 119, 6, 0.9); }
+
+/* Plain-form (no-JS) grouping page checkbox tiles */
+.otm-simple-group-tile {
+    position: relative;
+    display: block;
+}
+.otm-simple-group-tile input[type="checkbox"] {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    z-index: 2;
+}
+.otm-simple-group-tile img {
+    border: 3px solid transparent;
+    border-radius: var(--otm-radius-sm);
+    transition: border-color 0.12s ease;
+}
+.otm-simple-group-tile input[type="checkbox"]:checked ~ img {
+    border-color: var(--otm-success);
 }
 
 /* Quick product modal */
@@ -180,33 +718,235 @@
     position: fixed;
     inset: 0;
     z-index: 1060;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(15, 23, 42, 0.5);
     display: none;
     align-items: center;
     justify-content: center;
     padding: 1rem;
 }
-.otm-quick-modal.otm-open {
-    display: flex;
-}
+.otm-quick-modal.otm-open { display: flex; }
 .otm-quick-modal-panel {
-    background: #fff;
-    border-radius: 0.6rem;
+    background: var(--otm-surface);
+    border-radius: var(--otm-radius);
     width: 100%;
     max-width: 24rem;
-    padding: 1rem;
+    padding: 1.25rem;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: var(--otm-shadow-hover);
 }
 
-/* Larger touch targets on phones */
+/* ==================================================================
+   Status outcome panels (selected / rejected / changes requested)
+   ================================================================== */
+.otm-outcome-panel {
+    border-radius: var(--otm-radius);
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid transparent;
+}
+.otm-outcome-panel .otm-outcome-title {
+    font-weight: 800;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+.otm-outcome-success {
+    background: var(--otm-success-soft);
+    border-color: #bbf7d0;
+    color: #14532d;
+}
+.otm-outcome-success .otm-outcome-title { color: #15803d; }
+.otm-outcome-danger {
+    background: var(--otm-danger-soft);
+    border-color: #fecaca;
+    color: #7f1d1d;
+}
+.otm-outcome-danger .otm-outcome-title { color: #b91c1c; }
+.otm-outcome-warning {
+    background: var(--otm-warning-soft);
+    border-color: #fde68a;
+    color: #78350f;
+}
+.otm-outcome-warning .otm-outcome-title { color: #b45309; }
+.otm-outcome-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+@media (min-width: 768px) {
+    .otm-outcome-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.otm-outcome-grid-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    font-weight: 700;
+}
+.otm-outcome-grid-value { font-weight: 700; }
+
+/* ==================================================================
+   Form sections (create/edit product)
+   ================================================================== */
+.otm-form-section {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: 1.1rem;
+    margin-bottom: 1rem;
+}
+.otm-form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--otm-border);
+}
+.otm-form-section-title .bi { color: var(--otm-primary); }
+
+/* ==================================================================
+   Profile page
+   ================================================================== */
+.otm-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.otm-profile-avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--otm-primary-soft);
+    color: var(--otm-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+.otm-profile-name { font-weight: 800; font-size: 1.15rem; }
+.otm-profile-code-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--otm-primary-dark);
+    background: var(--otm-primary-soft);
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    margin-top: 0.2rem;
+}
+.otm-info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--otm-border);
+    font-size: 0.88rem;
+}
+.otm-info-row:last-child { border-bottom: none; }
+.otm-info-row-label { color: var(--otm-text-muted); font-weight: 600; }
+.otm-info-row-value { text-align: right; font-weight: 600; }
+.otm-info-notice {
+    background: var(--otm-slate-soft);
+    border-radius: var(--otm-radius-sm);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.8rem;
+    color: var(--otm-text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* ==================================================================
+   Empty states
+   ================================================================== */
+.otm-empty-state {
+    background: var(--otm-surface);
+    border: 1px dashed var(--otm-border);
+    border-radius: var(--otm-radius);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+}
+.otm-empty-state .bi {
+    font-size: 2.2rem;
+    color: var(--otm-text-muted);
+    margin-bottom: 0.75rem;
+    display: inline-block;
+}
+.otm-empty-state-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+}
+.otm-empty-state-text {
+    color: var(--otm-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    max-width: 26rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ==================================================================
+   Simple bulk upload page-specific touches
+   ================================================================== */
+.otm-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+.otm-step-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--otm-slate-soft);
+    color: var(--otm-text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+}
+.otm-step-chip .otm-step-num {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--otm-surface);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+}
+.otm-step-chip.otm-step-active {
+    background: var(--otm-primary-soft);
+    color: var(--otm-primary-dark);
+}
+.otm-step-chip.otm-step-active .otm-step-num {
+    background: var(--otm-primary);
+    color: #fff;
+}
+
+/* ==================================================================
+   Larger touch targets on phones
+   ================================================================== */
 @media (max-width: 576px) {
-    .otm-vendor-portal .btn {
-        min-height: 2.5rem;
-    }
+    .otm-vendor-portal .btn { min-height: 2.6rem; }
     .otm-vendor-portal .form-control,
     .otm-vendor-portal .form-select {
-        min-height: 2.6rem;
+        min-height: 2.7rem;
         font-size: 1rem; /* avoid iOS zoom-on-focus */
     }
 }
