@@ -8,50 +8,106 @@
  * dict.get() inside a kanban template. CSS classes sidestep the whole
  * problem and are also just simpler to maintain. */
 
+.o_otm_submission_kanban.o_kanban_view {
+    background-color: #f6f7fb;
+    padding: 4px 8px;
+}
+
+/* Card shell */
 .o_otm_submission_kanban .o_otm_card {
-    border: 1px solid #e5e7eb;
-    border-top: 3px solid #9ca3af; /* default / draft */
+    border: 1px solid #e7e8ee;
+    border-radius: 14px !important;
+    transition: box-shadow .15s ease, transform .1s ease;
+}
+.o_otm_submission_kanban .o_kanban_record {
+    margin-bottom: 12px;
+}
+.o_otm_submission_kanban .o_otm_card:hover {
+    box-shadow: 0 10px 24px rgba(20, 20, 43, .12) !important;
+    transform: translateY(-3px);
+}
+
+/* Bold solid-color status band across the top of the image, instead of
+ * a thin border — this is the main "colorful SaaS" signal on the card. */
+.o_otm_submission_kanban .o_otm_status_band {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    padding: 0 .65rem;
+    font-weight: 800;
+    font-size: .72rem;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #fff;
 }
 .o_otm_submission_kanban .o_otm_status_pill {
-    background: #f3f4f6;
-    color: #4b5563;
+    background: transparent;
+    color: #fff;
+    padding: 0;
+    font-weight: 800;
 }
 
-.o_otm_submission_kanban .o_otm_state_draft { border-top-color: #9ca3af; }
-.o_otm_submission_kanban .o_otm_state_draft .o_otm_status_pill { background: #f3f4f6; color: #4b5563; }
+.o_otm_submission_kanban .o_otm_state_draft .o_otm_status_band { background: linear-gradient(90deg,#9ca3af,#b6bcc9); }
+.o_otm_submission_kanban .o_otm_state_submitted .o_otm_status_band { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.o_otm_submission_kanban .o_otm_state_under_review .o_otm_status_band { background: linear-gradient(90deg,#6366f1,#818cf8); }
+.o_otm_submission_kanban .o_otm_state_duplicate_review .o_otm_status_band { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.o_otm_submission_kanban .o_otm_state_changes_requested .o_otm_status_band { background: linear-gradient(90deg,#f97316,#fb923c); }
+.o_otm_submission_kanban .o_otm_state_selected .o_otm_status_band { background: linear-gradient(90deg,#16a34a,#22c55e); }
+.o_otm_submission_kanban .o_otm_state_rejected .o_otm_status_band { background: linear-gradient(90deg,#dc2626,#ef4444); }
+.o_otm_submission_kanban .o_otm_state_archived .o_otm_status_band { background: linear-gradient(90deg,#6b7280,#9ca3af); }
 
-.o_otm_submission_kanban .o_otm_state_submitted { border-top-color: #0ea5e9; }
-.o_otm_submission_kanban .o_otm_state_submitted .o_otm_status_pill { background: #e0f7fe; color: #0369a1; }
-
-.o_otm_submission_kanban .o_otm_state_under_review { border-top-color: #6366f1; }
-.o_otm_submission_kanban .o_otm_state_under_review .o_otm_status_pill { background: #eef0ff; color: #4338ca; }
-
-.o_otm_submission_kanban .o_otm_state_duplicate_review { border-top-color: #f59e0b; }
-.o_otm_submission_kanban .o_otm_state_duplicate_review .o_otm_status_pill { background: #fef3c7; color: #92400e; }
-
-.o_otm_submission_kanban .o_otm_state_changes_requested { border-top-color: #f97316; }
-.o_otm_submission_kanban .o_otm_state_changes_requested .o_otm_status_pill { background: #ffe4cf; color: #9a3412; }
-
-.o_otm_submission_kanban .o_otm_state_selected { border-top-color: #22c55e; }
-.o_otm_submission_kanban .o_otm_state_selected .o_otm_status_pill { background: #dcfce7; color: #15803d; }
-
-.o_otm_submission_kanban .o_otm_state_rejected { border-top-color: #ef4444; }
-.o_otm_submission_kanban .o_otm_state_rejected .o_otm_status_pill { background: #fee2e2; color: #b91c1c; }
-
-.o_otm_submission_kanban .o_otm_state_archived { border-top-color: #6b7280; }
-.o_otm_submission_kanban .o_otm_state_archived .o_otm_status_pill { background: #e5e7eb; color: #374151; }
+/* Card body accent: a soft tint that matches the state, so the whole
+ * card reads with color even when there's no product photo yet. */
+.o_otm_submission_kanban .o_otm_state_draft .o_otm_img_wrap { background: linear-gradient(160deg,#f3f4f6,#e8e9ee); }
+.o_otm_submission_kanban .o_otm_state_submitted .o_otm_img_wrap { background: linear-gradient(160deg,#e0f7fe,#cdeffd); }
+.o_otm_submission_kanban .o_otm_state_under_review .o_otm_img_wrap { background: linear-gradient(160deg,#eef0ff,#e0e3ff); }
+.o_otm_submission_kanban .o_otm_state_duplicate_review .o_otm_img_wrap { background: linear-gradient(160deg,#fef3c7,#fde9a8); }
+.o_otm_submission_kanban .o_otm_state_changes_requested .o_otm_img_wrap { background: linear-gradient(160deg,#ffe4cf,#ffd3b0); }
+.o_otm_submission_kanban .o_otm_state_selected .o_otm_img_wrap { background: linear-gradient(160deg,#dcfce7,#c3f5d4); }
+.o_otm_submission_kanban .o_otm_state_rejected .o_otm_img_wrap { background: linear-gradient(160deg,#fee2e2,#fdc9c9); }
+.o_otm_submission_kanban .o_otm_state_archived .o_otm_img_wrap { background: linear-gradient(160deg,#e5e7eb,#d7d9de); }
 
 .o_otm_submission_kanban .o_otm_dup_badge {
-    background: #fef3c7;
-    color: #92400e;
-    font-weight: 700;
+    background: #fff;
+    color: #b45309;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
 
 .o_otm_submission_kanban .o_otm_img_wrap {
     aspect-ratio: 4 / 3;
-    background: linear-gradient(135deg, #eef0ff, #f7f5ff);
     overflow: hidden;
 }
 .o_otm_submission_kanban .o_otm_img_wrap img {
     object-fit: cover;
 }
+.o_otm_submission_kanban .o_otm_img_wrap .fa-image {
+    opacity: .35;
+}
+
+/* Kanban lane (group column) headers — tint the "Draft (3)" / "Under
+ * Review (2)" style column titles to match the state color, so the
+ * board reads as color-coded lanes, Trello-style, not plain black text
+ * on white. Odoo's kanban groupby column exposes the technical value
+ * via a data-name attribute on .o_kanban_group. */
+.o_otm_submission_kanban .o_kanban_group {
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 8px;
+    margin-right: 10px;
+}
+.o_otm_submission_kanban .o_kanban_group .o_kanban_header,
+.o_otm_submission_kanban .o_kanban_group .o_column_title {
+    font-weight: 800;
+    border-radius: 8px;
+    padding: 4px 10px;
+    display: inline-block;
+}
+.o_otm_submission_kanban .o_kanban_group[data-name="draft"] .o_column_title { background:#f3f4f6; color:#4b5563; }
+.o_otm_submission_kanban .o_kanban_group[data-name="submitted"] .o_column_title { background:#e0f7fe; color:#0369a1; }
+.o_otm_submission_kanban .o_kanban_group[data-name="under_review"] .o_column_title { background:#eef0ff; color:#4338ca; }
+.o_otm_submission_kanban .o_kanban_group[data-name="duplicate_review"] .o_column_title { background:#fef3c7; color:#92400e; }
+.o_otm_submission_kanban .o_kanban_group[data-name="changes_requested"] .o_column_title { background:#ffe4cf; color:#9a3412; }
+.o_otm_submission_kanban .o_kanban_group[data-name="selected"] .o_column_title { background:#dcfce7; color:#15803d; }
+.o_otm_submission_kanban .o_kanban_group[data-name="rejected"] .o_column_title { background:#fee2e2; color:#b91c1c; }
+.o_otm_submission_kanban .o_kanban_group[data-name="archived"] .o_column_title { background:#e5e7eb; color:#374151; }

@@ -40,7 +40,10 @@
                 <field name="vendor_sku"/>
                 <templates>
                     <t t-name="card">
-                        <div t-attf-class="card o_otm_card oe_kanban_global_click rounded-3 shadow-sm overflow-hidden h-100 o_otm_state_#{record.state.raw_value}">
+                        <div t-attf-class="card o_otm_card oe_kanban_global_click rounded-3 overflow-hidden h-100 o_otm_state_#{record.state.raw_value}">
+                            <div class="o_otm_status_band">
+                                <span class="o_otm_status_pill"><t t-esc="record.state.value"/></span>
+                            </div>
                             <div class="position-relative o_otm_img_wrap">
                                 <img t-if="record.main_image_id.raw_value"
                                      t-attf-src="/web/image/otm.vendor.product.image/#{record.main_image_id.raw_value}/image_256"
@@ -51,9 +54,6 @@
                                 <span t-if="record.has_duplicate_flag.raw_value"
                                       class="position-absolute top-0 end-0 m-2 badge rounded-pill o_otm_dup_badge">
                                     <i class="fa fa-exclamation-triangle me-1"/>Duplicate
-                                </span>
-                                <span class="position-absolute bottom-0 start-0 m-2 badge rounded-pill o_otm_status_pill">
-                                    <t t-esc="record.state.value"/>
                                 </span>
                             </div>
                             <div class="p-2">
