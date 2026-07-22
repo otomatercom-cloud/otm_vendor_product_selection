@@ -56,9 +56,6 @@ class OtmVendorPortal(CustomerPortal):
         grouped = dict(Submission._read_group(
             domain=[('vendor_id', '=', vendor.id)],
             groupby=['state'], aggregates=['__count']))
-        duplicate_count = Submission.search_count([
-            ('vendor_id', '=', vendor.id),
-            ('has_duplicate_flag', '=', True)])
         return {
             'total': sum(grouped.values()),
             'draft': grouped.get('draft', 0),
@@ -68,7 +65,6 @@ class OtmVendorPortal(CustomerPortal):
             'selected': grouped.get('selected', 0),
             'rejected': grouped.get('rejected', 0),
             'changes_requested': grouped.get('changes_requested', 0),
-            'duplicates': duplicate_count,
         }
 
     def _prepare_home_portal_values(self, counters):
@@ -285,17 +281,16 @@ class OtmVendorPortal(CustomerPortal):
         for file_storage in files:
             results.append(self._handle_image_upload(
                 vendor, file_storage, submission=submission))
-        # Small sync analysis so the vendor sees duplicate flags immediately
+        # Run duplicate analysis now so it's ready for Purchase Managers —
+        # but deliberately never send the result back to the vendor. A
+        # vendor learning which images get flagged would let them tweak
+        # and re-upload to dodge detection, so this stays manager-only
+        # (Duplicate Management / mobile review app).
         images = request.env['otm.vendor.product.image'].browse(
             [r['image_id'] for r in results if r.get('image_id')])
         service = request.env['otm.vendor.duplicate.service']
         if len(images) <= service.get_sync_limit():
             service.sudo().analyse_images(images.sudo())
-        for result in results:
-            if result.get('image_id'):
-                img = request.env['otm.vendor.product.image'].browse(
-                    result['image_id'])
-                result['duplicate_status'] = img.duplicate_status
         return request.make_json_response({'success': True, 'results': results})
 
     @http.route('/my/vendor/image/<int:image_id>/delete', type='http',
@@ -389,8 +384,6 @@ class OtmVendorPortal(CustomerPortal):
             'state': batch.state,
             'total': batch.total_images,
             'new': batch.new_images,
-            'exact_duplicates': batch.exact_duplicates,
-            'possible_duplicates': batch.possible_duplicates,
         }
 
     @http.route('/my/vendor/upload/batch/<int:batch_id>/images',
@@ -411,7 +404,6 @@ class OtmVendorPortal(CustomerPortal):
                 'id': img.id,
                 'thumb_url': '/web/image/otm.vendor.product.image/%s/image_256'
                     % img.id,
-                'duplicate_status': img.duplicate_status,
                 'process_state': img.process_state,
                 'assigned': bool(img.submission_id),
                 'submission_name': img.submission_id.name or '',

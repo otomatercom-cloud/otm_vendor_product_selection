@@ -34,6 +34,30 @@
                             class="btn btn-sm btn-light">Filters</button>
                 </header>
 
+                <!-- KPI strip -->
+                <div class="otm-review-kpis">
+                    <div class="otm-review-kpi otm-kpi-brand">
+                        <span class="otm-kpi-ic">&#128229;</span>
+                        <span class="otm-kpi-val" t-out="counts.get('submitted', 0)"/>
+                        <span class="otm-kpi-lbl">New Submissions</span>
+                    </div>
+                    <div class="otm-review-kpi otm-kpi-info">
+                        <span class="otm-kpi-ic">&#128269;</span>
+                        <span class="otm-kpi-val" t-out="counts.get('under_review', 0)"/>
+                        <span class="otm-kpi-lbl">Under Review</span>
+                    </div>
+                    <div class="otm-review-kpi otm-kpi-warning">
+                        <span class="otm-kpi-ic">&#9888;</span>
+                        <span class="otm-kpi-val" t-out="counts.get('duplicate_pending', 0)"/>
+                        <span class="otm-kpi-lbl">Duplicate Images</span>
+                    </div>
+                    <div class="otm-review-kpi otm-kpi-success">
+                        <span class="otm-kpi-ic">&#9989;</span>
+                        <span class="otm-kpi-val" t-out="counts.get('selected', 0)"/>
+                        <span class="otm-kpi-lbl">Selected</span>
+                    </div>
+                </div>
+
                 <!-- Status tabs -->
                 <nav class="otm-review-tabs d-flex flex-nowrap overflow-auto gap-2 px-2 py-2">
                     <button type="button" class="btn btn-sm btn-primary otm-tab"

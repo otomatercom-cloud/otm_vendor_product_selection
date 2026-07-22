@@ -85,26 +85,5 @@
 </div>
             </field>
         </record>
-
-        <record id="mail_template_otm_submission_duplicate" model="mail.template">
-            <field name="name">Vendor Product: Duplicate Detected</field>
-            <field name="model_id" ref="model_otm_vendor_product_submission"/>
-            <field name="subject">Duplicate Image Detected: {{ object.name }} ({{ object.code }})</field>
-            <field name="email_to">{{ object.vendor_id.email }}</field>
-            <field name="body_html" type="html">
-<div style="font-family: Arial, sans-serif; font-size: 14px;">
-    <p>Dear <t t-out="object.vendor_id.name"/>,</p>
-    <p>One or more images of your product submission matched images already in our catalogue and are under duplicate review.</p>
-    <ul>
-        <li><strong>Product:</strong> <t t-out="object.name"/></li>
-        <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
-        <li><strong>Status:</strong> Duplicate Review</li>
-        <li><strong>Comments:</strong> <t t-out="object.manager_comments or '-'"/></li>
-    </ul>
-    <p>No action is required from you at this time.</p>
-    <p>— Otomater Vendor Portal</p>
-</div>
-            </field>
-        </record>
     </data>
 </odoo>

@@ -395,13 +395,6 @@
                     badge.className = 'otm-group-badge';
                     badge.textContent = img.submission_name || 'Assigned';
                     col.appendChild(badge);
-                } else if (img.duplicate_status === 'exact_duplicate'
-                        || img.duplicate_status === 'possible_duplicate'
-                        || img.duplicate_status === 'similar') {
-                    var dupBadge = document.createElement('div');
-                    dupBadge.className = 'otm-group-badge otm-badge-dup';
-                    dupBadge.textContent = 'Possible duplicate';
-                    col.appendChild(dupBadge);
                 }
 
                 if (!img.assigned) {
@@ -591,10 +584,6 @@
                         finishRes.total;
                     document.getElementById('otm_res_new').textContent =
                         finishRes.new;
-                    document.getElementById('otm_res_exact').textContent =
-                        finishRes.exact_duplicates;
-                    document.getElementById('otm_res_possible').textContent =
-                        finishRes.possible_duplicates;
                     var processingNote = document.getElementById(
                         'otm_res_processing');
                     if (finishRes.state === 'processing') {

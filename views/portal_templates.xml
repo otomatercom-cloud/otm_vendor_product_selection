@@ -151,18 +151,23 @@
 
     <!-- Small helper: status badge -->
     <template id="portal_vendor_state_badge" name="Vendor Submission State Badge">
+        <!-- duplicate_review is deliberately shown to vendors as plain
+             "Under Review" — the real state name would tell them their
+             images were flagged, letting them learn and evade detection.
+             Purchase Managers still see the true state in the review app. -->
+        <t t-set="otm_display_state"
+           t-value="'under_review' if badge_submission.state == 'duplicate_review' else badge_submission.state"/>
         <t t-set="otm_state_classes" t-value="{
             'draft': 'text-bg-secondary',
             'submitted': 'text-bg-info',
             'under_review': 'text-bg-primary',
-            'duplicate_review': 'text-bg-warning',
             'changes_requested': 'text-bg-warning',
             'selected': 'text-bg-success',
             'rejected': 'text-bg-danger',
             'archived': 'text-bg-dark',
         }"/>
-        <span t-attf-class="badge #{otm_state_classes.get(badge_submission.state, 'text-bg-secondary')}">
-            <t t-out="dict(badge_submission._fields['state']._description_selection(badge_submission.env)).get(badge_submission.state)"/>
+        <span t-attf-class="badge #{otm_state_classes.get(otm_display_state, 'text-bg-secondary')}">
+            <t t-out="dict(badge_submission._fields['state']._description_selection(badge_submission.env)).get(otm_display_state)"/>
         </span>
     </template>
 
@@ -229,11 +234,6 @@
                         <span class="otm-kpi-value" t-out="counts['changes_requested']"/>
                         <span class="otm-kpi-label">Changes Requested</span>
                     </a>
-                    <div class="otm-kpi-card otm-kpi-warning">
-                        <span class="otm-kpi-icon"><i class="bi bi-exclamation-triangle"/></span>
-                        <span class="otm-kpi-value" t-out="counts['duplicates']"/>
-                        <span class="otm-kpi-label">Duplicate Images</span>
-                    </div>
                 </div>
 
                 <div class="mt-4">
@@ -271,7 +271,6 @@
                                         <th>Batch</th>
                                         <th class="text-end">Total</th>
                                         <th class="text-end">New</th>
-                                        <th class="text-end">Duplicates</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -280,8 +279,6 @@
                                         <td class="fw-semibold" t-out="batch.name"/>
                                         <td class="text-end" t-out="batch.total_images"/>
                                         <td class="text-end" t-out="batch.new_images"/>
-                                        <td class="text-end"
-                                            t-out="batch.exact_duplicates + batch.possible_duplicates"/>
                                         <td>
                                             <t t-set="otm_batch_state_classes" t-value="{
                                                 'draft': 'otm-badge-draft', 'uploading': 'otm-badge-submitted',
@@ -307,7 +304,6 @@
                                     <div class="otm-batch-card-stats">
                                         <span>Total: <strong t-out="batch.total_images"/></span>
                                         <span>New: <strong t-out="batch.new_images"/></span>
-                                        <span>Duplicates: <strong t-out="batch.exact_duplicates + batch.possible_duplicates"/></span>
                                     </div>
                                 </div>
                             </div>
@@ -389,10 +385,6 @@
                                      d-flex align-items-center justify-content-center">
                                     <i class="bi bi-image"/>
                                 </div>
-                                <span t-if="submission.has_duplicate_flag"
-                                      class="otm-dup-badge otm-dup-possible otm-card-dup-flag">
-                                    <i class="bi bi-exclamation-triangle"/> Duplicate?
-                                </span>
                             </div>
                             <div class="otm-card-body">
                                 <div class="otm-card-name" t-out="submission.name"/>
@@ -513,18 +505,6 @@
                                     </a>
                                     <span t-if="image.is_main_image"
                                           class="otm-main-badge">Main</span>
-                                    <span t-if="image.duplicate_status == 'exact_duplicate'"
-                                          class="otm-dup-badge otm-dup-exact position-absolute top-0 end-0 m-1">
-                                        <i class="bi bi-exclamation-octagon"/> Exact
-                                    </span>
-                                    <span t-elif="image.duplicate_status == 'possible_duplicate'"
-                                          class="otm-dup-badge otm-dup-possible position-absolute top-0 end-0 m-1">
-                                        <i class="bi bi-exclamation-triangle"/> Possible
-                                    </span>
-                                    <span t-elif="image.duplicate_status == 'similar'"
-                                          class="otm-dup-badge otm-dup-similar position-absolute top-0 end-0 m-1">
-                                        <i class="bi bi-info-circle"/> Similar
-                                    </span>
                                     <button t-if="editable" type="button"
                                             class="btn btn-sm btn-danger otm-img-delete"
                                             t-att-data-image-id="image.id"
@@ -1022,7 +1002,6 @@
                         Upload many images at once — no need to create a product
                         first. Once uploaded, group the images below and give
                         each group a name and price to turn it into a product.
-                        Duplicates are checked automatically.
                         Maximum <t t-out="max_upload_mb"/> MB per image.
                     </p>
                 </div>
@@ -1032,13 +1011,10 @@
                         <span class="otm-step-num">1</span> Upload Images
                     </span>
                     <span class="otm-step-chip otm-step-active">
-                        <span class="otm-step-num">2</span> Review Duplicates
+                        <span class="otm-step-num">2</span> Group Images
                     </span>
                     <span class="otm-step-chip otm-step-active">
-                        <span class="otm-step-num">3</span> Group Images
-                    </span>
-                    <span class="otm-step-chip otm-step-active">
-                        <span class="otm-step-num">4</span> Create Products
+                        <span class="otm-step-num">3</span> Create Products
                     </span>
                 </div>
 
@@ -1081,11 +1057,9 @@
                         <div class="otm-outcome-panel otm-outcome-success">
                             <div>Batch: <strong id="otm_res_batch"></strong></div>
                             <div>Total: <span id="otm_res_total"></span> &#8226;
-                                 New: <span id="otm_res_new"></span> &#8226;
-                                 Exact duplicates: <span id="otm_res_exact"></span> &#8226;
-                                 Possible duplicates: <span id="otm_res_possible"></span></div>
+                                 New: <span id="otm_res_new"></span></div>
                             <div id="otm_res_processing" class="d-none mt-1">
-                                Large batch queued — duplicate analysis continues in the
+                                Large batch queued — processing continues in the
                                 background. Refresh this section shortly, or check
                                 <a href="/my/vendor/batches">Upload History</a>.
                             </div>
@@ -1098,8 +1072,7 @@
                         <p class="text-muted small">
                             Tap the images that belong to the same product, then tap
                             "Create Product from Selected". Repeat until every image
-                            is assigned. Images flagged as duplicates are best
-                            reviewed before creating a product from them.
+                            is assigned.
                         </p>
                         <div id="otm_group_grid" class="row g-2"></div>
                         <div class="d-flex align-items-center gap-2 mt-3 sticky-bottom bg-white py-2">
@@ -1180,13 +1153,10 @@
                         <span class="otm-step-num">1</span> Upload Images
                     </span>
                     <span class="otm-step-chip">
-                        <span class="otm-step-num">2</span> Review Duplicates
+                        <span class="otm-step-num">2</span> Group Images
                     </span>
                     <span class="otm-step-chip">
-                        <span class="otm-step-num">3</span> Group Images
-                    </span>
-                    <span class="otm-step-chip">
-                        <span class="otm-step-num">4</span> Create Products
+                        <span class="otm-step-num">3</span> Create Products
                     </span>
                 </div>
 
@@ -1242,13 +1212,10 @@
                         <span class="otm-step-num">1</span> Upload Images
                     </span>
                     <span class="otm-step-chip otm-step-active">
-                        <span class="otm-step-num">2</span> Review Duplicates
-                    </span>
-                    <span class="otm-step-chip otm-step-active">
-                        <span class="otm-step-num">3</span> Group Images
+                        <span class="otm-step-num">2</span> Group Images
                     </span>
                     <span class="otm-step-chip">
-                        <span class="otm-step-num">4</span> Create Products
+                        <span class="otm-step-num">3</span> Create Products
                     </span>
                 </div>
 
@@ -1280,18 +1247,6 @@
                                          class="img-fluid w-100"
                                          style="aspect-ratio: 1/1; object-fit: cover;"
                                          t-att-alt="image.name"/>
-                                    <span t-if="image.duplicate_status == 'exact_duplicate'"
-                                          class="otm-dup-badge otm-dup-exact d-block mt-1 text-center">
-                                        <i class="bi bi-exclamation-octagon"/> Exact duplicate
-                                    </span>
-                                    <span t-elif="image.duplicate_status == 'possible_duplicate'"
-                                          class="otm-dup-badge otm-dup-possible d-block mt-1 text-center">
-                                        <i class="bi bi-exclamation-triangle"/> Possible duplicate
-                                    </span>
-                                    <span t-elif="image.duplicate_status == 'similar'"
-                                          class="otm-dup-badge otm-dup-similar d-block mt-1 text-center">
-                                        <i class="bi bi-info-circle"/> Similar image
-                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -1366,8 +1321,6 @@
                                     <th>Date</th>
                                     <th class="text-end">Total</th>
                                     <th class="text-end">New</th>
-                                    <th class="text-end">Exact Dup.</th>
-                                    <th class="text-end">Possible Dup.</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -1378,8 +1331,6 @@
                                         t-options="{'widget': 'datetime'}"/>
                                     <td class="text-end" t-out="batch.total_images"/>
                                     <td class="text-end" t-out="batch.new_images"/>
-                                    <td class="text-end" t-out="batch.exact_duplicates"/>
-                                    <td class="text-end" t-out="batch.possible_duplicates"/>
                                     <td>
                                         <t t-set="otm_batch_state_classes" t-value="{
                                             'draft': 'otm-badge-draft', 'uploading': 'otm-badge-submitted',
@@ -1407,8 +1358,6 @@
                                 <div class="otm-batch-card-stats">
                                     <span>Total: <strong t-out="batch.total_images"/></span>
                                     <span>New: <strong t-out="batch.new_images"/></span>
-                                    <span>Exact: <strong t-out="batch.exact_duplicates"/></span>
-                                    <span>Possible: <strong t-out="batch.possible_duplicates"/></span>
                                 </div>
                             </div>
                         </div>

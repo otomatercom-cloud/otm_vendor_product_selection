@@ -304,9 +304,14 @@ class OtmVendorProductSubmission(models.Model):
         self._notify_vendor('mail_template_otm_submission_changes')
 
     def action_send_duplicate_review(self):
+        """Flag for internal duplicate review. Deliberately does NOT notify
+        the vendor — telling a vendor which images were flagged as
+        duplicates would let them learn and evade the detection system.
+        Duplicate status is visible to Purchase Managers only, via the
+        Duplicate Management screens / mobile review app.
+        """
         self._check_manager()
         self.write({'state': 'duplicate_review'})
-        self._notify_vendor('mail_template_otm_submission_duplicate')
 
     def action_archive_submission(self):
         self._check_manager()
