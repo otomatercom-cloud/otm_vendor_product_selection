@@ -57,6 +57,7 @@ Fashion/dress retail vendor submission platform:
         'wizards/portal_user_wizard_views.xml',
         'views/vendor_submission_views.xml',
         'views/res_partner_views.xml',
+        'views/vendor_dashboard_action.xml',
         'views/vendor_menus.xml',
         # 4. Frontend templates
         'views/portal_templates.xml',
@@ -65,6 +66,9 @@ Fashion/dress retail vendor submission platform:
     'assets': {
         'web.assets_backend': [
             'otm_vendor_product_selection/static/src/css/backend_kanban.css',
+            'otm_vendor_product_selection/static/src/css/vendor_dashboard.css',
+            'otm_vendor_product_selection/static/src/js/backend/vendor_dashboard.js',
+            'otm_vendor_product_selection/static/src/xml/vendor_dashboard.xml',
         ],
         'web.assets_frontend': [
             'otm_vendor_product_selection/static/src/css/vendor_portal.css',

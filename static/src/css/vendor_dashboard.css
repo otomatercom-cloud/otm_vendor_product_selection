@@ -1,0 +1,209 @@
+/* Part of Otomater. See LICENSE file for full copyright and licensing details. */
+/* Backend OWL dashboard for otm.vendor.product.submission — scoped to
+ * .o_otm_dashboard, mobile-first, no global Odoo overrides. */
+
+.o_otm_dashboard {
+    --otm-primary: #4f46e5;
+    --otm-bg: #f6f7fb;
+    --otm-surface: #ffffff;
+    --otm-border: #e7e8ee;
+    --otm-text: #1f2937;
+    --otm-text-muted: #6b7280;
+    --otm-radius: 14px;
+    --otm-shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+    --otm-shadow-hover: 0 8px 20px rgba(16,24,40,.10);
+
+    background: var(--otm-bg);
+    color: var(--otm-text);
+    padding: 1rem;
+    min-height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+.o_otm_dashboard * { box-sizing: border-box; }
+
+.o_otm_dash_header { margin-bottom: 1rem; }
+.o_otm_dash_header h2 { font-weight: 800; font-size: 1.4rem; margin: 0; }
+
+/* ---- KPI grid ---- */
+.o_otm_kpi_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .6rem;
+    margin-bottom: 1rem;
+}
+@media (min-width: 576px) { .o_otm_kpi_grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1200px) { .o_otm_kpi_grid { grid-template-columns: repeat(7, 1fr); } }
+
+.o_otm_kpi {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: .8rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    text-align: left;
+    cursor: pointer;
+    transition: box-shadow .15s ease, transform .1s ease;
+}
+.o_otm_kpi:hover { box-shadow: var(--otm-shadow-hover); transform: translateY(-2px); }
+.o_otm_kpi.active { outline: 2px solid var(--otm-primary); }
+.o_otm_kpi_val { font-size: 1.4rem; font-weight: 800; line-height: 1; }
+.o_otm_kpi_lbl { font-size: .72rem; font-weight: 700; color: var(--otm-text-muted); }
+.o_otm_kpi_slate .o_otm_kpi_val { color: #4b5563; }
+.o_otm_kpi_blue .o_otm_kpi_val { color: #0369a1; }
+.o_otm_kpi_indigo .o_otm_kpi_val { color: #4338ca; }
+.o_otm_kpi_amber .o_otm_kpi_val { color: #92400e; }
+.o_otm_kpi_orange .o_otm_kpi_val { color: #9a3412; }
+.o_otm_kpi_green .o_otm_kpi_val { color: #15803d; }
+.o_otm_kpi_red .o_otm_kpi_val { color: #b91c1c; }
+
+/* ---- Tabs ---- */
+.o_otm_tabs {
+    display: flex;
+    gap: .4rem;
+    overflow-x: auto;
+    padding-bottom: .3rem;
+    margin-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+.o_otm_tabs::-webkit-scrollbar { display: none; }
+.o_otm_tab {
+    flex: 0 0 auto;
+    border: 1px solid var(--otm-border);
+    background: var(--otm-surface);
+    color: var(--otm-text-muted);
+    font-weight: 700;
+    font-size: .78rem;
+    padding: .4rem .8rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.o_otm_tab.active { background: var(--otm-primary); border-color: var(--otm-primary); color: #fff; }
+
+.o_otm_loading, .o_otm_empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--otm-text-muted);
+}
+.o_otm_empty { background: var(--otm-surface); border: 1px dashed var(--otm-border); border-radius: var(--otm-radius); }
+.o_otm_empty .fa { font-size: 2rem; margin-bottom: .5rem; }
+.o_otm_empty_title { font-weight: 700; color: var(--otm-text); margin-bottom: .25rem; }
+.o_otm_spinner {
+    display: inline-block; width: 1rem; height: 1rem;
+    border: 2px solid var(--otm-border); border-top-color: var(--otm-primary);
+    border-radius: 50%; animation: otm-spin .7s linear infinite; margin-right: .4rem;
+}
+@keyframes otm-spin { to { transform: rotate(360deg); } }
+
+/* ---- Product grid ---- */
+.o_otm_product_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem;
+}
+@media (min-width: 576px) { .o_otm_product_grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 992px) { .o_otm_product_grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1400px) { .o_otm_product_grid { grid-template-columns: repeat(5, 1fr); } }
+
+.o_otm_pcard {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .15s ease, transform .1s ease;
+}
+.o_otm_pcard:hover { box-shadow: var(--otm-shadow-hover); transform: translateY(-2px); }
+
+.o_otm_status_band {
+    padding: .3rem .6rem;
+    font-size: .66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #fff;
+}
+.o_otm_state_draft .o_otm_status_band { background: linear-gradient(90deg,#9ca3af,#b6bcc9); }
+.o_otm_state_submitted .o_otm_status_band { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.o_otm_state_under_review .o_otm_status_band { background: linear-gradient(90deg,#6366f1,#818cf8); }
+.o_otm_state_duplicate_review .o_otm_status_band { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.o_otm_state_changes_requested .o_otm_status_band { background: linear-gradient(90deg,#f97316,#fb923c); }
+.o_otm_state_selected .o_otm_status_band { background: linear-gradient(90deg,#16a34a,#22c55e); }
+.o_otm_state_rejected .o_otm_status_band { background: linear-gradient(90deg,#dc2626,#ef4444); }
+.o_otm_state_archived .o_otm_status_band { background: linear-gradient(90deg,#6b7280,#9ca3af); }
+
+.o_otm_pcard_img {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(160deg,#eef0ff,#f7f5ff);
+    cursor: pointer;
+    overflow: hidden;
+}
+.o_otm_pcard_img img { width: 100%; height: 100%; object-fit: cover; }
+.o_otm_pcard_noimg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: .35; }
+.o_otm_pcard_dupflag {
+    position: absolute; top: .4rem; right: .4rem;
+    background: #fff; color: #b45309; font-weight: 800; font-size: .65rem;
+    padding: .2rem .5rem; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+.o_otm_pcard_body { padding: .55rem .6rem; flex: 1; }
+.o_otm_pcard_name { font-weight: 700; font-size: .84rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.o_otm_pcard_meta { font-size: .72rem; color: var(--otm-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.o_otm_pcard_price { font-weight: 800; font-size: .85rem; margin-top: .25rem; }
+.o_otm_pcard_actions { display: flex; gap: .3rem; padding: 0 .6rem .6rem; }
+.o_otm_pcard_actions .btn { font-size: .72rem; padding: .3rem .2rem; border-radius: 8px; font-weight: 700; }
+
+/* ---- Duplicate review list ---- */
+.o_otm_dup_list { display: flex; flex-direction: column; gap: .8rem; }
+.o_otm_dup_card {
+    background: var(--otm-surface);
+    border: 1px solid var(--otm-border);
+    border-radius: var(--otm-radius);
+    box-shadow: var(--otm-shadow);
+    padding: .8rem;
+}
+.o_otm_dup_top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+.o_otm_dup_type_badge {
+    font-size: .7rem; font-weight: 800; padding: .25rem .6rem; border-radius: 999px;
+}
+.o_otm_dt_exact_duplicate { background: #fee2e2; color: #b91c1c; }
+.o_otm_dt_possible_duplicate { background: #ffe4cf; color: #9a3412; }
+.o_otm_dt_similar { background: #fef3c7; color: #92400e; }
+.o_otm_dup_score { font-weight: 700; font-size: .8rem; color: var(--otm-text-muted); }
+
+.o_otm_dup_compare {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .6rem;
+    align-items: center;
+}
+@media (min-width: 768px) {
+    .o_otm_dup_compare { grid-template-columns: 1fr auto 1fr; }
+}
+.o_otm_dup_side { text-align: center; }
+.o_otm_dup_side img {
+    width: 100%; max-width: 220px; aspect-ratio: 1/1; object-fit: cover;
+    border-radius: 10px; background: #f0f1f5;
+}
+.o_otm_dup_vendor { margin-top: .4rem; font-size: .82rem; }
+.o_otm_dup_side_label {
+    display: inline-block; margin-top: .3rem; font-size: .65rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .03em; color: var(--otm-text-muted);
+    background: #f3f4f6; padding: .15rem .5rem; border-radius: 999px;
+}
+.o_otm_dup_vs { text-align: center; color: var(--otm-text-muted); font-size: 1.2rem; }
+
+.o_otm_dup_actions {
+    display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem;
+    padding-top: .7rem; border-top: 1px solid var(--otm-border);
+}
+.o_otm_dup_actions .btn { flex: 1 1 auto; font-size: .76rem; font-weight: 700; border-radius: 8px; }
+
+@media (max-width: 576px) {
+    .o_otm_dashboard { padding: .6rem; }
+    .o_otm_dash_header h2 { font-size: 1.15rem; }
+}

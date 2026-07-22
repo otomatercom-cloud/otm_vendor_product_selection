@@ -7,11 +7,12 @@
               groups="otm_vendor_product_selection.group_otm_vendor_user"
               web_icon="otm_vendor_product_selection,static/description/icon.png"/>
 
-    <!-- Dashboard = grouped kanban of all submissions -->
+    <!-- Dashboard = OWL SaaS-style dashboard: KPIs, product review, and
+         duplicate comparison with vendor details, all on one screen. -->
     <menuitem id="menu_otm_vendor_dashboard"
               name="Dashboard"
               parent="menu_otm_vendor_root"
-              action="action_otm_vendor_product_submission"
+              action="action_otm_vendor_dashboard"
               sequence="1"/>
 
     <!-- ================================================================ -->

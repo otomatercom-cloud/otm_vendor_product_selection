@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="otm_vendor_product_selection.Dashboard" owl="1">
+    <div class="o_otm_dashboard">
+        <div class="o_otm_dash_header">
+            <div>
+                <h2>Purchase Review Dashboard</h2>
+                <p class="text-muted mb-0">
+                    Track vendor product submissions and review flagged duplicate images.
+                </p>
+            </div>
+        </div>
+
+        <div class="o_otm_kpi_grid">
+            <button class="o_otm_kpi o_otm_kpi_slate"
+                    t-attf-class="{{ state.activeTab === 'draft' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('draft')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.draft"/>
+                <span class="o_otm_kpi_lbl">Draft</span>
+            </button>
+            <button class="o_otm_kpi o_otm_kpi_blue"
+                    t-attf-class="{{ state.activeTab === 'submitted' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('submitted')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.submitted"/>
+                <span class="o_otm_kpi_lbl">New Submissions</span>
+            </button>
+            <button class="o_otm_kpi o_otm_kpi_indigo"
+                    t-attf-class="{{ state.activeTab === 'under_review' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('under_review')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.under_review"/>
+                <span class="o_otm_kpi_lbl">Under Review</span>
+            </button>
+            <button class="o_otm_kpi o_otm_kpi_amber"
+                    t-attf-class="{{ state.activeTab === 'duplicates' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('duplicates')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.duplicates"/>
+                <span class="o_otm_kpi_lbl">Duplicates Found</span>
+            </button>
+            <button class="o_otm_kpi o_otm_kpi_orange"
+                    t-attf-class="{{ state.activeTab === 'changes_requested' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('changes_requested')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.changes_requested"/>
+                <span class="o_otm_kpi_lbl">Changes Requested</span>
+            </button>
+            <button class="o_otm_kpi o_otm_kpi_green"
+                    t-attf-class="{{ state.activeTab === 'selected' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('selected')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.selected"/>
+                <span class="o_otm_kpi_lbl">Selected</span>
+            </button>
+            <button class="o_otm_kpi o_otm_kpi_red"
+                    t-attf-class="{{ state.activeTab === 'rejected' ? 'active' : '' }}"
+                    t-on-click="() => this.loadTab('rejected')">
+                <span class="o_otm_kpi_val" t-esc="state.kpis.rejected"/>
+                <span class="o_otm_kpi_lbl">Rejected</span>
+            </button>
+        </div>
+
+        <div class="o_otm_tabs">
+            <t t-foreach="tabs" t-as="tab" t-key="tab.id">
+                <button t-attf-class="o_otm_tab {{ state.activeTab === tab.id ? 'active' : '' }}"
+                        t-on-click="() => this.loadTab(tab.id)">
+                    <t t-esc="tab.label"/>
+                </button>
+            </t>
+        </div>
+
+        <div t-if="state.loading" class="o_otm_loading">
+            <span class="o_otm_spinner"/> Loading&#8230;
+        </div>
+
+        <t t-if="!state.loading and state.activeTab !== 'duplicates'">
+            <div t-if="!state.submissions.length" class="o_otm_empty">
+                <i class="fa fa-inbox"/>
+                <div class="o_otm_empty_title">Nothing here</div>
+                <div class="text-muted">No products currently in this view.</div>
+            </div>
+            <div t-else="" class="o_otm_product_grid">
+                <div t-foreach="state.submissions" t-as="rec" t-key="rec.id"
+                     t-attf-class="o_otm_pcard o_otm_state_{{ rec.state }}">
+                    <div class="o_otm_status_band">
+                        <span t-esc="this.stateLabel(rec.state)"/>
+                    </div>
+                    <div class="o_otm_pcard_img" t-on-click="() => this.openProduct(rec.id)">
+                        <img t-if="rec.main_image_id" t-att-src="this.mainImageUrl(rec)"/>
+                        <div t-else="" class="o_otm_pcard_noimg"><i class="fa fa-image fa-2x"/></div>
+                        <span t-if="rec.has_duplicate_flag" class="o_otm_pcard_dupflag">
+                            <i class="fa fa-exclamation-triangle me-1"/>Duplicate
+                        </span>
+                    </div>
+                    <div class="o_otm_pcard_body">
+                        <div class="o_otm_pcard_name" t-esc="rec.name"/>
+                        <div class="o_otm_pcard_meta">
+                            <t t-esc="rec.vendor_id ? rec.vendor_id[1] : ''"/>
+                            <t t-if="rec.vendor_sku"> &#8226; <t t-esc="rec.vendor_sku"/></t>
+                        </div>
+                        <div class="o_otm_pcard_price">
+                            <t t-esc="rec.currency_id ? rec.currency_id[1] : ''"/>
+                            <t t-esc="rec.purchase_price"/>
+                        </div>
+                    </div>
+                    <div class="o_otm_pcard_actions" t-if="this.isActionable(rec.state)">
+                        <button t-if="rec.state === 'submitted'"
+                                class="btn btn-sm btn-outline-primary flex-fill"
+                                t-on-click="() => this.startReview(rec.id)">
+                            <i class="fa fa-search me-1"/>Review
+                        </button>
+                        <button class="btn btn-sm btn-success flex-fill"
+                                t-on-click="() => this.openSelectWizard(rec.id)">
+                            <i class="fa fa-check me-1"/>Select
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger flex-fill"
+                                t-on-click="() => this.openRejectWizard(rec.id)">
+                            <i class="fa fa-times me-1"/>Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </t>
+
+        <t t-if="!state.loading and state.activeTab === 'duplicates'">
+            <div t-if="!state.duplicates.length" class="o_otm_empty">
+                <i class="fa fa-check-circle"/>
+                <div class="o_otm_empty_title">No duplicates flagged</div>
+                <div class="text-muted">Everything currently in the catalogue looks unique.</div>
+            </div>
+            <div t-else="" class="o_otm_dup_list">
+                <div t-foreach="state.duplicates" t-as="img" t-key="img.id" class="o_otm_dup_card">
+                    <div class="o_otm_dup_top">
+                        <span t-attf-class="o_otm_dup_type_badge o_otm_dt_{{ img.duplicate_status }}">
+                            <t t-esc="this.dupLabel(img.duplicate_status)"/>
+                        </span>
+                        <span class="o_otm_dup_score">
+                            <t t-esc="Math.round(img.similarity_score || 0)"/>% match
+                        </span>
+                    </div>
+                    <div class="o_otm_dup_compare">
+                        <div class="o_otm_dup_side">
+                            <img t-att-src="this.imageUrl(img.id)"/>
+                            <div class="o_otm_dup_vendor">
+                                <strong t-esc="img.vendor_id ? img.vendor_id[1] : 'Unknown vendor'"/>
+                                <div t-if="this.vendorInfo(img.vendor_id)" class="small text-muted">
+                                    <t t-esc="this.vendorInfo(img.vendor_id).otm_vendor_code"/><br/>
+                                    <t t-esc="this.vendorInfo(img.vendor_id).email"/>
+                                </div>
+                                <div class="small text-muted" t-esc="img.submission_id ? img.submission_id[1] : ''"/>
+                            </div>
+                            <span class="o_otm_dup_side_label">New Upload</span>
+                        </div>
+                        <div class="o_otm_dup_vs"><i class="fa fa-arrows-h"/></div>
+                        <div class="o_otm_dup_side" t-if="img.duplicate_image_id">
+                            <img t-att-src="this.imageUrl(img.duplicate_image_id[0])"/>
+                            <div class="o_otm_dup_vendor">
+                                <strong t-esc="img.duplicate_vendor_id ? img.duplicate_vendor_id[1] : 'Unknown vendor'"/>
+                                <div t-if="this.vendorInfo(img.duplicate_vendor_id)" class="small text-muted">
+                                    <t t-esc="this.vendorInfo(img.duplicate_vendor_id).otm_vendor_code"/><br/>
+                                    <t t-esc="this.vendorInfo(img.duplicate_vendor_id).email"/>
+                                </div>
+                                <div class="small text-muted" t-esc="img.duplicate_submission_id ? img.duplicate_submission_id[1] : ''"/>
+                            </div>
+                            <span class="o_otm_dup_side_label">Already in Catalogue</span>
+                        </div>
+                    </div>
+                    <div class="o_otm_dup_actions">
+                        <button class="btn btn-sm btn-outline-secondary"
+                                t-on-click="() => this.notDuplicate(img.id)">Not a Duplicate</button>
+                        <button class="btn btn-sm btn-outline-primary"
+                                t-on-click="() => this.keepBoth(img.id)">Keep Both</button>
+                        <button class="btn btn-sm btn-outline-info"
+                                t-on-click="() => this.linkExisting(img.id)">Link Existing</button>
+                        <button class="btn btn-sm btn-danger"
+                                t-on-click="() => this.confirmDuplicate(img.id)">Confirm Duplicate</button>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>
