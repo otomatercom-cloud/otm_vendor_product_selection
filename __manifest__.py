@@ -63,6 +63,9 @@ Fashion/dress retail vendor submission platform:
         'views/review_templates.xml',
     ],
     'assets': {
+        'web.assets_backend': [
+            'otm_vendor_product_selection/static/src/css/backend_kanban.css',
+        ],
         'web.assets_frontend': [
             'otm_vendor_product_selection/static/src/css/vendor_portal.css',
             'otm_vendor_product_selection/static/src/css/review_interface.css',

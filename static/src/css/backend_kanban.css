@@ -1,0 +1,57 @@
+/* Part of Otomater. See LICENSE file for full copyright and licensing details. */
+/* Backend kanban styling for otm.vendor.product.submission — scoped to
+ * .o_otm_submission_kanban so nothing else in the Odoo backend is
+ * affected. State colors are plain CSS classes rather than inline
+ * style lookups: Odoo's newer kanban "card" templates compile to
+ * JavaScript (OWL), where a Python dict literal has no .get() method —
+ * that mismatch is what causes an OwlError at render time if you try
+ * dict.get() inside a kanban template. CSS classes sidestep the whole
+ * problem and are also just simpler to maintain. */
+
+.o_otm_submission_kanban .o_otm_card {
+    border: 1px solid #e5e7eb;
+    border-top: 3px solid #9ca3af; /* default / draft */
+}
+.o_otm_submission_kanban .o_otm_status_pill {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.o_otm_submission_kanban .o_otm_state_draft { border-top-color: #9ca3af; }
+.o_otm_submission_kanban .o_otm_state_draft .o_otm_status_pill { background: #f3f4f6; color: #4b5563; }
+
+.o_otm_submission_kanban .o_otm_state_submitted { border-top-color: #0ea5e9; }
+.o_otm_submission_kanban .o_otm_state_submitted .o_otm_status_pill { background: #e0f7fe; color: #0369a1; }
+
+.o_otm_submission_kanban .o_otm_state_under_review { border-top-color: #6366f1; }
+.o_otm_submission_kanban .o_otm_state_under_review .o_otm_status_pill { background: #eef0ff; color: #4338ca; }
+
+.o_otm_submission_kanban .o_otm_state_duplicate_review { border-top-color: #f59e0b; }
+.o_otm_submission_kanban .o_otm_state_duplicate_review .o_otm_status_pill { background: #fef3c7; color: #92400e; }
+
+.o_otm_submission_kanban .o_otm_state_changes_requested { border-top-color: #f97316; }
+.o_otm_submission_kanban .o_otm_state_changes_requested .o_otm_status_pill { background: #ffe4cf; color: #9a3412; }
+
+.o_otm_submission_kanban .o_otm_state_selected { border-top-color: #22c55e; }
+.o_otm_submission_kanban .o_otm_state_selected .o_otm_status_pill { background: #dcfce7; color: #15803d; }
+
+.o_otm_submission_kanban .o_otm_state_rejected { border-top-color: #ef4444; }
+.o_otm_submission_kanban .o_otm_state_rejected .o_otm_status_pill { background: #fee2e2; color: #b91c1c; }
+
+.o_otm_submission_kanban .o_otm_state_archived { border-top-color: #6b7280; }
+.o_otm_submission_kanban .o_otm_state_archived .o_otm_status_pill { background: #e5e7eb; color: #374151; }
+
+.o_otm_submission_kanban .o_otm_dup_badge {
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+}
+
+.o_otm_submission_kanban .o_otm_img_wrap {
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #eef0ff, #f7f5ff);
+    overflow: hidden;
+}
+.o_otm_submission_kanban .o_otm_img_wrap img {
+    object-fit: cover;
+}

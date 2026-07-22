@@ -38,39 +38,21 @@
                 <field name="currency_id"/>
                 <field name="main_image_id"/>
                 <field name="vendor_sku"/>
-                <field name="code"/>
                 <templates>
                     <t t-name="card">
-                        <t t-set="otm_state_color" t-value="{
-                            'draft': '#9ca3af', 'submitted': '#0ea5e9',
-                            'under_review': '#6366f1', 'duplicate_review': '#f59e0b',
-                            'changes_requested': '#f97316', 'selected': '#22c55e',
-                            'rejected': '#ef4444', 'archived': '#6b7280',
-                        }.get(record.state.raw_value, '#9ca3af')"/>
-                        <t t-set="otm_state_bg" t-value="{
-                            'draft': '#f3f4f6', 'submitted': '#e0f7fe',
-                            'under_review': '#eef0ff', 'duplicate_review': '#fef3c7',
-                            'changes_requested': '#ffe4cf', 'selected': '#dcfce7',
-                            'rejected': '#fee2e2', 'archived': '#e5e7eb',
-                        }.get(record.state.raw_value, '#f3f4f6')"/>
-                        <div class="card oe_kanban_global_click rounded-3 shadow-sm overflow-hidden h-100"
-                             t-attf-style="border: 1px solid #e5e7eb; border-top: 3px solid #{otm_state_color};">
-                            <div class="position-relative"
-                                 t-attf-style="aspect-ratio: 4/3; background: linear-gradient(135deg, #eef0ff, #f7f5ff); overflow: hidden;">
+                        <div t-attf-class="card o_otm_card oe_kanban_global_click rounded-3 shadow-sm overflow-hidden h-100 o_otm_state_#{record.state.raw_value}">
+                            <div class="position-relative o_otm_img_wrap">
                                 <img t-if="record.main_image_id.raw_value"
                                      t-attf-src="/web/image/otm.vendor.product.image/#{record.main_image_id.raw_value}/image_256"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover;"/>
+                                     class="w-100 h-100"/>
                                 <div t-else="" class="d-flex align-items-center justify-content-center h-100 text-muted">
                                     <i class="fa fa-image fa-2x"/>
                                 </div>
                                 <span t-if="record.has_duplicate_flag.raw_value"
-                                      class="position-absolute top-0 end-0 m-2 badge rounded-pill"
-                                      style="background:#fef3c7; color:#92400e; font-weight:700;">
+                                      class="position-absolute top-0 end-0 m-2 badge rounded-pill o_otm_dup_badge">
                                     <i class="fa fa-exclamation-triangle me-1"/>Duplicate
                                 </span>
-                                <span class="position-absolute bottom-0 start-0 m-2 badge rounded-pill"
-                                      t-attf-style="background:#{otm_state_bg}; color:#{otm_state_color}; font-weight:700;">
+                                <span class="position-absolute bottom-0 start-0 m-2 badge rounded-pill o_otm_status_pill">
                                     <t t-esc="record.state.value"/>
                                 </span>
                             </div>
