@@ -31,22 +31,84 @@
         <field name="name">otm.vendor.product.submission.kanban</field>
         <field name="model">otm.vendor.product.submission</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state" quick_create="false">
+            <kanban default_group_by="state" quick_create="false"
+                    class="o_otm_submission_kanban">
                 <field name="state"/>
                 <field name="has_duplicate_flag"/>
                 <field name="currency_id"/>
                 <field name="main_image_id"/>
+                <field name="vendor_sku"/>
+                <field name="code"/>
                 <templates>
                     <t t-name="card">
-                        <div class="d-flex flex-column">
-                            <field name="name" class="fw-bold fs-5"/>
-                            <field name="vendor_id"/>
-                            <div class="d-flex justify-content-between">
-                                <field name="purchase_price" widget="monetary"/>
-                                <field name="primary_category_id"/>
+                        <t t-set="otm_state_color" t-value="{
+                            'draft': '#9ca3af', 'submitted': '#0ea5e9',
+                            'under_review': '#6366f1', 'duplicate_review': '#f59e0b',
+                            'changes_requested': '#f97316', 'selected': '#22c55e',
+                            'rejected': '#ef4444', 'archived': '#6b7280',
+                        }.get(record.state.raw_value, '#9ca3af')"/>
+                        <t t-set="otm_state_bg" t-value="{
+                            'draft': '#f3f4f6', 'submitted': '#e0f7fe',
+                            'under_review': '#eef0ff', 'duplicate_review': '#fef3c7',
+                            'changes_requested': '#ffe4cf', 'selected': '#dcfce7',
+                            'rejected': '#fee2e2', 'archived': '#e5e7eb',
+                        }.get(record.state.raw_value, '#f3f4f6')"/>
+                        <div class="card oe_kanban_global_click rounded-3 shadow-sm overflow-hidden h-100"
+                             t-attf-style="border: 1px solid #e5e7eb; border-top: 3px solid #{otm_state_color};">
+                            <div class="position-relative"
+                                 t-attf-style="aspect-ratio: 4/3; background: linear-gradient(135deg, #eef0ff, #f7f5ff); overflow: hidden;">
+                                <img t-if="record.main_image_id.raw_value"
+                                     t-attf-src="/web/image/otm.vendor.product.image/#{record.main_image_id.raw_value}/image_256"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"/>
+                                <div t-else="" class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                    <i class="fa fa-image fa-2x"/>
+                                </div>
+                                <span t-if="record.has_duplicate_flag.raw_value"
+                                      class="position-absolute top-0 end-0 m-2 badge rounded-pill"
+                                      style="background:#fef3c7; color:#92400e; font-weight:700;">
+                                    <i class="fa fa-exclamation-triangle me-1"/>Duplicate
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-2 badge rounded-pill"
+                                      t-attf-style="background:#{otm_state_bg}; color:#{otm_state_color}; font-weight:700;">
+                                    <t t-esc="record.state.value"/>
+                                </span>
                             </div>
-                            <div t-if="record.has_duplicate_flag.raw_value"
-                                 class="badge text-bg-warning mt-1">Duplicate flagged</div>
+                            <div class="p-2">
+                                <div class="fw-bold text-truncate" style="font-size:.92rem;">
+                                    <field name="name"/>
+                                </div>
+                                <div class="text-muted small text-truncate">
+                                    <field name="vendor_id"/>
+                                    <t t-if="record.vendor_sku.raw_value"> &#8226; <field name="vendor_sku"/></t>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <span class="fw-bold" style="font-size:.95rem;">
+                                        <field name="purchase_price" widget="monetary"/>
+                                    </span>
+                                    <field name="primary_category_id" class="text-muted small text-truncate"/>
+                                </div>
+                                <div class="d-flex gap-1 mt-2 flex-wrap">
+                                    <button type="object" name="action_start_review"
+                                            invisible="state != 'submitted'"
+                                            class="btn btn-sm btn-outline-primary flex-fill">
+                                        <i class="fa fa-search me-1"/>Review
+                                    </button>
+                                    <button type="action"
+                                            name="%(otm_vendor_product_selection.action_otm_vendor_selection_wizard)d"
+                                            invisible="state not in ('submitted', 'under_review', 'duplicate_review')"
+                                            class="btn btn-sm btn-success flex-fill">
+                                        <i class="fa fa-check me-1"/>Select
+                                    </button>
+                                    <button type="action"
+                                            name="%(otm_vendor_product_selection.action_otm_vendor_rejection_wizard)d"
+                                            context="{'default_mode': 'reject'}"
+                                            invisible="state not in ('submitted', 'under_review', 'duplicate_review')"
+                                            class="btn btn-sm btn-outline-danger flex-fill">
+                                        <i class="fa fa-times me-1"/>Reject
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </t>
                 </templates>
