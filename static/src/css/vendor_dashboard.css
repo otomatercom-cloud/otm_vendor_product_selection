@@ -16,9 +16,7 @@
     background: var(--otm-bg);
     color: var(--otm-text);
     padding: 1rem;
-    min-height: 100%;
     box-sizing: border-box;
-    overflow-y: auto;
 }
 .o_otm_dashboard * { box-sizing: border-box; }
 
