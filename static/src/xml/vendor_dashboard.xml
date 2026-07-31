@@ -85,8 +85,11 @@
                     <div class="o_otm_pcard_img" t-on-click="() => this.openProduct(rec.id)">
                         <img t-if="rec.main_image_id" t-att-src="this.mainImageUrl(rec)"/>
                         <div t-else="" class="o_otm_pcard_noimg"><i class="fa fa-image fa-2x"/></div>
-                        <span t-if="rec.has_duplicate_flag" class="o_otm_pcard_dupflag">
-                            <i class="fa fa-exclamation-triangle me-1"/>Duplicate
+                        <span t-if="rec.has_confirmed_duplicate" class="o_otm_pcard_dupflag o_otm_dupflag_confirmed">
+                            <i class="fa fa-ban me-1"/>Confirmed Duplicate
+                        </span>
+                        <span t-elif="rec.has_duplicate_flag" class="o_otm_pcard_dupflag">
+                            <i class="fa fa-exclamation-triangle me-1"/>Possible Duplicate
                         </span>
                     </div>
                     <div class="o_otm_pcard_body">
@@ -110,7 +113,12 @@
                                 t-on-click="() => this.openSelectWizard(rec.id)">
                             <i class="fa fa-check me-1"/>Select
                         </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill"
+                        <button t-if="rec.has_confirmed_duplicate"
+                                class="btn btn-sm btn-danger flex-fill"
+                                t-on-click="() => this.openRejectAsDuplicateWizard(rec.id)">
+                            <i class="fa fa-ban me-1"/>Reject as Duplicate
+                        </button>
+                        <button t-else="" class="btn btn-sm btn-outline-danger flex-fill"
                                 t-on-click="() => this.openRejectWizard(rec.id)">
                             <i class="fa fa-times me-1"/>Reject
                         </button>

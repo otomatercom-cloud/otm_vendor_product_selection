@@ -93,6 +93,7 @@ export class OtmVendorDashboard extends Component {
                     "otm.vendor.product.submission", domain,
                     ["name", "vendor_id", "vendor_sku", "purchase_price",
                      "currency_id", "state", "has_duplicate_flag",
+                     "has_confirmed_duplicate",
                      "main_image_id", "primary_category_id"],
                     { order: "create_date desc", limit: 120 });
             }
@@ -186,6 +187,19 @@ export class OtmVendorDashboard extends Component {
             "otm_vendor_product_selection.action_otm_vendor_rejection_wizard",
             {
                 additionalContext: { active_ids: [id], default_mode: "reject" },
+                onClose: () => this.refreshCurrent(),
+            });
+    }
+
+    openRejectAsDuplicateWizard(id) {
+        this.action.doAction(
+            "otm_vendor_product_selection.action_otm_vendor_rejection_wizard",
+            {
+                additionalContext: {
+                    active_ids: [id],
+                    default_mode: "reject",
+                    default_reason: "Duplicate of an existing catalogue item.",
+                },
                 onClose: () => this.refreshCurrent(),
             });
     }

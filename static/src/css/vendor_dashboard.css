@@ -148,6 +148,13 @@
     background: #fff; color: #b45309; font-weight: 800; font-size: .65rem;
     padding: .2rem .5rem; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
+.o_otm_pcard_dupflag.o_otm_dupflag_confirmed {
+    background: #dc2626; color: #fff;
+}
+.o_otm_pcard:has(.o_otm_dupflag_confirmed) {
+    outline: 2px solid #dc2626;
+    outline-offset: -1px;
+}
 .o_otm_pcard_body { padding: .55rem .6rem; flex: 1; }
 .o_otm_pcard_name { font-weight: 700; font-size: .84rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .o_otm_pcard_meta { font-size: .72rem; color: var(--otm-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

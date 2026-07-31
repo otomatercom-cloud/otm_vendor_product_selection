@@ -118,6 +118,13 @@ class OtmVendorProductSubmission(models.Model):
         store=True, index=True,
         help='True when at least one image is flagged as an exact or '
              'possible duplicate awaiting review.')
+    has_confirmed_duplicate = fields.Boolean(
+        string='Has Confirmed Duplicate', compute='_compute_image_stats',
+        store=True, index=True,
+        help='True once a Purchase Manager has confirmed at least one '
+             'image as a duplicate via the Duplicate Review screen — as '
+             'opposed to has_duplicate_flag, which just means a possible '
+             'match is still awaiting a decision.')
 
     # ------------------------------------------------------------------
     # Workflow
@@ -171,6 +178,9 @@ class OtmVendorProductSubmission(models.Model):
             submission.image_count = len(submission.image_ids)
             submission.has_duplicate_flag = any(
                 img.duplicate_status in ('exact_duplicate', 'possible_duplicate')
+                for img in submission.image_ids)
+            submission.has_confirmed_duplicate = any(
+                img.duplicate_status == 'rejected_duplicate'
                 for img in submission.image_ids)
 
     @api.constrains('purchase_price', 'mrp')
