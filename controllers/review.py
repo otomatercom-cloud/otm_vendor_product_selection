@@ -54,6 +54,7 @@ class OtmProductReviewController(http.Controller):
             'category': submission.primary_category_id.complete_name or '',
             'purchase_price': submission.purchase_price,
             'mrp': submission.mrp,
+            'available_qty': submission.available_qty,
             'currency': submission.currency_id.symbol or '',
             'state': submission.state,
             'state_label': dict(

@@ -16,7 +16,7 @@
         <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>
         <li><strong>Status:</strong> Submitted</li>
     </ul>
-    <p>You will be notified once the Purchase Manager reviews it.</p>
+    <p>You will be notified once the Procurement Team reviews it.</p>
     <p>— Otomater Vendor Portal</p>
 </div>
             </field>
@@ -73,7 +73,7 @@
             <field name="body_html" type="html">
 <div style="font-family: Arial, sans-serif; font-size: 14px;">
     <p>Dear <t t-out="object.vendor_id.name"/>,</p>
-    <p>The Purchase Manager has requested changes to your product submission.</p>
+    <p>The Procurement Team has requested changes to your product submission.</p>
     <ul>
         <li><strong>Product:</strong> <t t-out="object.name"/></li>
         <li><strong>Vendor SKU:</strong> <t t-out="object.vendor_sku or '-'"/></li>

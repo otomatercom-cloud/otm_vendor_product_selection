@@ -57,7 +57,7 @@
                 ('/my/vendor/product/new', 'bi-plus-circle', 'Upload Product', ['otm_vendor_product_new', 'otm_vendor_product_detail']),
             ]),
             ('uploads', 'Uploads', [
-                ('/my/vendor/upload', 'bi-cloud-upload', 'Bulk Upload', ['otm_vendor_bulk_upload']),
+                ('/my/vendor/upload/simple', 'bi-cloud-upload', 'Bulk Upload', ['otm_vendor_simple_bulk_upload', 'otm_vendor_simple_bulk_group']),
                 ('/my/vendor/batches', 'bi-clock-history', 'Upload History', ['otm_vendor_batches']),
             ]),
             ('status', 'Product Status', [
@@ -86,15 +86,6 @@
                         </t>
                     </div>
                 </t>
-                <div class="otm-nav-group">
-                    <div class="otm-nav-group-label">Fallback</div>
-                    <a href="/my/vendor/upload/simple"
-                       t-attf-class="otm-nav-link otm-secondary #{'otm-active' if page_name in ('otm_vendor_simple_bulk_upload', 'otm_vendor_simple_bulk_group') else ''}"
-                       title="Alternative upload method that works even without JavaScript">
-                        <i class="bi bi-life-preserver"/>
-                        <span>Bulk Upload (Simple)</span>
-                    </a>
-                </div>
             </div>
         </nav>
 
@@ -129,13 +120,6 @@
                         </t>
                     </div>
                 </t>
-                <div class="otm-nav-group">
-                    <div class="otm-nav-group-label">Fallback</div>
-                    <a href="/my/vendor/upload/simple" class="otm-nav-link otm-secondary">
-                        <i class="bi bi-life-preserver"/>
-                        <span>Bulk Upload (Simple)</span>
-                    </a>
-                </div>
             </div>
         </div>
     </template>
@@ -197,7 +181,7 @@
                         <a href="/my/vendor/product/new" class="btn btn-primary">
                             <i class="bi bi-plus-lg me-1"/> Add Product
                         </a>
-                        <a href="/my/vendor/upload" class="btn btn-outline-primary">
+                        <a href="/my/vendor/upload/simple" class="btn btn-outline-primary">
                             <i class="bi bi-cloud-upload me-1"/> Bulk Upload
                         </a>
                     </div>
@@ -243,7 +227,7 @@
                             <i class="bi bi-plus-circle"/>
                             <span class="otm-quick-action-label">Upload New Product</span>
                         </a>
-                        <a href="/my/vendor/upload" class="otm-quick-action">
+                        <a href="/my/vendor/upload/simple" class="otm-quick-action">
                             <i class="bi bi-images"/>
                             <span class="otm-quick-action-label">Bulk Image Upload</span>
                         </a>
@@ -315,7 +299,7 @@
                         <div class="otm-empty-state-text">
                             Once you upload images in bulk, your batches will show up here.
                         </div>
-                        <a href="/my/vendor/upload" class="btn btn-primary btn-sm">Bulk Image Upload</a>
+                        <a href="/my/vendor/upload/simple" class="btn btn-primary btn-sm">Bulk Image Upload</a>
                     </div>
                 </div>
             </div>
@@ -780,7 +764,7 @@
                             t-out="submission.description if submission else ''"/></textarea>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Notes to Purchase Manager</label>
+                        <label class="form-label">Notes to Procurement Team</label>
                         <textarea name="vendor_notes" class="form-control" rows="2"><t
                             t-out="submission.vendor_notes if submission else ''"/></textarea>
                     </div>
@@ -952,7 +936,7 @@
                                     <textarea name="description" class="form-control" rows="3"/>
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Notes to Purchase Manager</label>
+                                    <label class="form-label">Notes to Procurement Team</label>
                                     <textarea name="vendor_notes" class="form-control" rows="2"/>
                                 </div>
                             </div>
@@ -1141,7 +1125,7 @@
             <div class="container otm-vendor-portal">
                 <t t-call="otm_vendor_product_selection.portal_vendor_nav"/>
                 <div class="otm-page-header">
-                    <h3 class="otm-page-title">Bulk Image Upload (Simple)</h3>
+                    <h3 class="otm-page-title">Bulk Image Upload</h3>
                     <p class="otm-page-subtitle">
                         Works without JavaScript — pick your photos and tap
                         Upload. Maximum <t t-out="max_upload_mb"/> MB per image.
@@ -1372,7 +1356,7 @@
                     <div class="otm-empty-state-text">
                         Bulk-upload some product photos and they'll show up here.
                     </div>
-                    <a href="/my/vendor/upload" class="btn btn-primary btn-sm">Bulk Upload</a>
+                    <a href="/my/vendor/upload/simple" class="btn btn-primary btn-sm">Bulk Upload</a>
                 </div>
             </div>
         </t>

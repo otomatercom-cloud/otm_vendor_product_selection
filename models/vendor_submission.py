@@ -198,6 +198,22 @@ class OtmVendorProductSubmission(models.Model):
         return (user.has_group('base.group_portal')
                 and not user.has_group('base.group_user'))
 
+    def _register_hook(self):
+        # Runs on every registry build — both fresh install AND module
+        # Upgrade (post_init_hook only covers install, which doesn't help
+        # existing databases). One-time backfill for submissions that
+        # already have photos but never got a main image assigned, since
+        # no upload path set main_image_id before this fix existed. Safe
+        # to re-run: the domain naturally stops matching once fixed.
+        super()._register_hook()
+        submissions = self.sudo().search([
+            ('main_image_id', '=', False), ('image_ids', '!=', False)])
+        for submission in submissions:
+            first = submission.image_ids.sorted('id')[:1]
+            if first:
+                first.is_main_image = True
+                submission.main_image_id = first.id
+
     @api.model_create_multi
     def create(self, vals_list):
         is_portal = self._is_portal_vendor_user()
@@ -245,7 +261,7 @@ class OtmVendorProductSubmission(models.Model):
         if not self.env.user.has_group(
                 'otm_vendor_product_selection.group_otm_vendor_manager'):
             raise AccessError(self.env._(
-                'Only Purchase Managers can perform this action.'))
+                'Only Procurement Managers can perform this action.'))
 
     def action_submit(self):
         """Vendor (or internal user) submits a draft for review."""

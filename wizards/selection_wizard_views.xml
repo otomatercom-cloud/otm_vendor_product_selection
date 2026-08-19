@@ -9,8 +9,10 @@
                 <group>
                     <field name="submission_count" string="Products to Select"/>
                     <field name="submission_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="currency_id" invisible="1"/>
                     <field name="selected_qty"/>
                     <field name="negotiated_price"/>
+                    <field name="total_amount" readonly="1"/>
                     <field name="selection_notes" placeholder="Optional selection note visible to the vendor..."/>
                 </group>
                 <footer>

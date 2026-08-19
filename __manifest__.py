@@ -3,7 +3,7 @@
 {
     'name': 'Otomater Vendor Product Selection Management',
     'summary': 'Vendor portal product submission, duplicate image detection '
-               'and Purchase Manager selection workflow for fashion retail.',
+               'and Procurement Manager selection workflow for fashion retail.',
     'description': """
 Otomater Vendor Product Selection Management
 ============================================
@@ -13,9 +13,9 @@ Fashion/dress retail vendor submission platform:
 * Vendor portal (/my/vendor): dashboard, product submission, bulk image upload
 * Hierarchical multi-category product categorisation
 * Two-level duplicate image detection (SHA-256 exact + perceptual hash)
-* Purchase Manager duplicate review screen
+* Procurement Manager duplicate review screen
 * Submission workflow: Draft -> Submitted -> Under Review -> Selected/Rejected
-* Mobile-first Purchase Manager review interface (/purchase/product-review)
+* Mobile-first Procurement Manager review interface (/purchase/product-review)
 * Conversion of selected submissions into product.template records
 * Vendor e-mail notifications on every status change
 """,

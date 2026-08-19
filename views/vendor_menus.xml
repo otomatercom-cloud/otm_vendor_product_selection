@@ -22,12 +22,12 @@
     <!-- tab so the frontend page isn't loaded inside the backend iframe.  -->
     <!-- ================================================================ -->
     <record id="action_otm_open_review_interface" model="ir.actions.act_url">
-        <field name="name">Purchase Review App (Mobile)</field>
+        <field name="name">Procurement App (Mobile)</field>
         <field name="url">/purchase/product-review</field>
         <field name="target">new</field>
     </record>
     <menuitem id="menu_otm_open_review_interface"
-              name="Purchase Review App"
+              name="Procurement App"
               parent="menu_otm_vendor_root"
               action="action_otm_open_review_interface"
               groups="otm_vendor_product_selection.group_otm_vendor_manager"

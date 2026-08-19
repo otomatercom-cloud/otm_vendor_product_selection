@@ -110,6 +110,21 @@ class OtmVendorProductImage(models.Model):
         # either synchronously (small uploads, from the controllers) or by
         # the cron for large batches — see duplicate_service.py.
         images._otm_compute_hashes()
+        # Auto-designate a main image so product cards actually show a
+        # thumbnail without requiring a manual "set as main" step, which
+        # no upload flow (portal, bulk, quick-create) ever prompts for.
+        # Only acts on images that already belong to a submission — images
+        # uploaded standalone into an unassigned batch get this once
+        # they're attached to a product via grouping/quick-create instead
+        # (see otm.vendor.product.submission.create()).
+        by_submission = {}
+        for image in images.filtered('submission_id'):
+            by_submission.setdefault(image.submission_id, []).append(image)
+        for submission, subm_images in by_submission.items():
+            if not submission.main_image_id:
+                first = subm_images[0]
+                first.is_main_image = True
+                submission.main_image_id = first.id
         return images
 
     def write(self, vals):
@@ -117,6 +132,16 @@ class OtmVendorProductImage(models.Model):
         if 'image_1920' in vals:
             self.write_hash_reset()
             self._otm_compute_hashes()
+        if vals.get('submission_id'):
+            by_submission = {}
+            for image in self:
+                if image.submission_id:
+                    by_submission.setdefault(image.submission_id, []).append(image)
+            for submission, subm_images in by_submission.items():
+                if not submission.main_image_id:
+                    first = subm_images[0]
+                    first.is_main_image = True
+                    submission.main_image_id = first.id
         return res
 
     def write_hash_reset(self):
@@ -142,7 +167,7 @@ class OtmVendorProductImage(models.Model):
         if not self.env.user.has_group(
                 'otm_vendor_product_selection.group_otm_vendor_manager'):
             raise UserError(self.env._(
-                'Only Purchase Managers can review duplicate images.'))
+                'Only Procurement Managers can review duplicate images.'))
 
     def action_confirm_duplicate(self):
         self._check_review_rights()

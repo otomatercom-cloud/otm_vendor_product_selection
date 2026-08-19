@@ -554,7 +554,15 @@ class OtmVendorPortal(CustomerPortal):
             return request.redirect(
                 '/my/vendor/upload/simple/group?error=missing')
 
-        vals = {'name': name, 'image_ids': [(6, 0, images.ids)]}
+        vals = {
+            'name': name,
+            'image_ids': [(6, 0, images.ids)],
+            # Each grouped image is treated as one available design/unit of
+            # this product, so the count of selected photos becomes the
+            # starting available quantity. Editable afterward like any
+            # other field, on the product's detail page.
+            'available_qty': len(images),
+        }
         if post.get('purchase_price'):
             try:
                 vals['purchase_price'] = float(post['purchase_price'])

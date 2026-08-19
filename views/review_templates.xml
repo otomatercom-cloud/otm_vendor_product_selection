@@ -205,6 +205,10 @@
                             <input type="number" id="otm_sel_price" class="form-control"
                                    min="0" step="0.01" inputmode="decimal"/>
                         </div>
+                        <div class="mb-2 otm-sel-total-row">
+                            <span class="text-muted small">Total Amount</span>
+                            <strong id="otm_sel_total">0.00</strong>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Selection Note</label>
                             <textarea id="otm_sel_notes" class="form-control" rows="2"></textarea>

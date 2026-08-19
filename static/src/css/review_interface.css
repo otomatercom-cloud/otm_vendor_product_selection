@@ -477,6 +477,18 @@
     max-height: 90vh;
     overflow-y: auto;
 }
+.otm-sel-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--otm-primary-soft, #eef2ff);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+.otm-sel-total-row strong {
+    font-size: 1rem;
+    color: var(--otm-primary-dark, #4338ca);
+}
 
 /* Fullscreen lightbox */
 .otm-lightbox {

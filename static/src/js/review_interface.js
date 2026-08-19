@@ -264,7 +264,7 @@
             selectBtn.textContent = 'Select';
             selectBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                openSelectModal([rec.id]);
+                openSelectModal([rec.id], rec);
             });
             var rejectBtn = document.createElement('button');
             rejectBtn.type = 'button';
@@ -324,13 +324,32 @@
          * ---------------------------------------------------------- */
         var selectModal = document.getElementById('otm_select_modal');
         var selectTargetIds = [];
-        function openSelectModal(ids) {
+        function updateSelectTotal() {
+            var qty = parseFloat(
+                document.getElementById('otm_sel_qty').value) || 0;
+            var price = parseFloat(
+                document.getElementById('otm_sel_price').value) || 0;
+            document.getElementById('otm_sel_total').textContent =
+                (qty * price).toFixed(2);
+        }
+        document.getElementById('otm_sel_qty').addEventListener(
+            'input', updateSelectTotal);
+        document.getElementById('otm_sel_price').addEventListener(
+            'input', updateSelectTotal);
+
+        function openSelectModal(ids, prefillRec) {
             selectTargetIds = ids;
             document.getElementById('otm_sel_multi').textContent =
                 ids.length > 1 ? ' (' + ids.length + ' items)' : '';
-            document.getElementById('otm_sel_qty').value = '';
-            document.getElementById('otm_sel_price').value = '';
+            // Default quantity to the number of designs/images grouped
+            // into this product at upload time, and price to its listed
+            // purchase price — the manager can still adjust either.
+            document.getElementById('otm_sel_qty').value =
+                (prefillRec && prefillRec.available_qty) || '';
+            document.getElementById('otm_sel_price').value =
+                (prefillRec && prefillRec.purchase_price) || '';
             document.getElementById('otm_sel_notes').value = '';
+            updateSelectTotal();
             selectModal.classList.add('otm-open');
         }
         document.getElementById('otm_sel_confirm').addEventListener(
@@ -557,7 +576,7 @@
             document.getElementById('otm_d_select').addEventListener(
                 'click', function () {
                     closeDetail();
-                    openSelectModal([rec.id]);
+                    openSelectModal([rec.id], rec);
                 });
         }
 
