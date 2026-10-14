@@ -40,17 +40,24 @@ from odoo.tools import SQL
 
 _logger = logging.getLogger(__name__)
 
+# These are C-extension wheels. On some servers they import fine, on others
+# they raise RuntimeError (e.g. "NumPy was built with baseline optimizations
+# (X86_V2) but your machine doesn't support"), not just ImportError. Catch
+# EVERYTHING so a broken optional library can never stop the module loading.
 try:
     import numpy as np
-except ImportError:  # pragma: no cover
+except Exception as _exc:  # pragma: no cover
     np = None
+    _logger.warning('numpy unavailable, design matching disabled: %s', _exc)
 try:
     import onnxruntime as ort
-except ImportError:  # pragma: no cover
+except Exception as _exc:  # pragma: no cover
     ort = None
+    _logger.warning('onnxruntime unavailable, design matching disabled: %s',
+                    _exc)
 try:
     from PIL import Image as PILImage, ImageOps
-except ImportError:  # pragma: no cover
+except Exception as _exc:  # pragma: no cover
     PILImage = ImageOps = None
 
 PARAM_MODEL_PATH = 'otm_vendor_product_selection.design_model_path'
