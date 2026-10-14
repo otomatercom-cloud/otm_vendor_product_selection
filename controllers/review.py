@@ -219,6 +219,13 @@ class OtmProductReviewController(http.Controller):
                 'existing_date': str(existing.create_date or ''),
                 'similarity_score': img.similarity_score,
                 'duplicate_type': img.duplicate_status,
+                'design_score': img.design_score,
+                'same_vendor': bool(img.vendor_id
+                                    and img.vendor_id == existing.vendor_id),
+                'existing_state': dict(
+                    existing.submission_id._fields['state'].selection
+                ).get(existing.submission_id.state, '')
+                if existing.submission_id else '',
             })
         return {'total': total, 'page': page,
                 'has_more': page * PAGE_SIZE < total, 'records': records}

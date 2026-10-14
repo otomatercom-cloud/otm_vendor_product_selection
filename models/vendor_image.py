@@ -86,6 +86,26 @@ class OtmVendorProductImage(models.Model):
         help='Guards against the same upload being analysed twice.')
     process_error = fields.Text(readonly=True, copy=False)
 
+    # --- design-level (AI embedding) matching -------------------------
+    design_embedding = fields.Binary(
+        attachment=False, readonly=True, copy=False, prefetch=False,
+        help='L2-normalised CLIP image embedding (float32).')
+    embed_state = fields.Selection([
+        ('pending', 'Pending'),
+        ('done', 'Indexed'),
+        ('error', 'Error'),
+    ], string='Design Index', default='pending', index=True, copy=False,
+        help='Pending = waiting for the design model / cron.')
+    embed_error = fields.Text(readonly=True, copy=False)
+    design_score = fields.Float(
+        string='Best Design Match (%)', digits=(5, 1), copy=False,
+        readonly=True,
+        help='Highest design similarity to an earlier image of another '
+             'product (any angle, any person wearing it).')
+    design_match_ids = fields.One2many(
+        'otm.vendor.design.match', 'image_id', string='Design Matches',
+        readonly=True)
+
     # Convenience related fields for the duplicate review screen
     duplicate_vendor_id = fields.Many2one(
         related='duplicate_image_id.vendor_id', string='Existing Vendor')
@@ -151,6 +171,8 @@ class OtmVendorProductImage(models.Model):
             'average_hash': False, 'dhash_c1': False, 'dhash_c2': False,
             'dhash_c3': False, 'dhash_c4': False,
             'duplicate_status': 'pending', 'process_state': 'pending',
+            'design_embedding': False, 'embed_state': 'pending',
+            'design_score': 0.0,
         })
 
     def _otm_compute_hashes(self):
@@ -200,6 +222,25 @@ class OtmVendorProductImage(models.Model):
                 'duplicate_status': 'approved_duplicate',
             })
         self._otm_log_review(self.env._('linked to the existing product'))
+
+    @api.model
+    def action_rebuild_design_index(self):
+        """Re-index every image (e.g. after changing the design model).
+        The cron picks them up in batches."""
+        self._check_review_rights()
+        images = self.sudo().search([])
+        self.env['otm.vendor.design.match'].sudo().search([]).unlink()
+        images.write({'embed_state': 'pending', 'design_embedding': False,
+                      'design_score': 0.0})
+        self.env.ref(
+            'otm_vendor_product_selection.ir_cron_process_design_matches'
+        )._trigger(at=fields.Datetime.now())
+        return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                'params': {'title': self.env._('Design index'),
+                           'message': self.env._(
+                               '%(n)s images queued for design indexing.',
+                               n=len(images)),
+                           'type': 'success', 'sticky': False}}
 
     def _otm_log_review(self, action_label):
         for image in self.filtered('submission_id'):

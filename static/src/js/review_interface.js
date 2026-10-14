@@ -627,12 +627,17 @@
                 + escapeHtml(rec.new_vendor) + '<br/>'
                 + escapeHtml(rec.new_product) + '</div></div>'
                 + '<div class="otm-dup-vs">VS<br/><span class="small">'
-                + Math.round((rec.similarity_score || 0) * 100) + '%</span></div>'
+                + Math.round(rec.similarity_score || 0) + '%</span></div>'
                 + '<div><img class="otm-dup-existing" src="' + rec.existing_thumb
                 + '" data-full="' + rec.existing_url + '" alt=""/>'
                 + '<div class="small text-muted mt-1">'
-                + escapeHtml(rec.existing_vendor) + '<br/>'
-                + escapeHtml(rec.existing_product) + '</div></div>'
+                + escapeHtml(rec.existing_vendor)
+                + (rec.same_vendor ? ' (same vendor)' : ' (other vendor)')
+                + '<br/>' + escapeHtml(rec.existing_product)
+                + (rec.existing_state
+                    ? '<br/><b>Earlier status: '
+                      + escapeHtml(rec.existing_state) + '</b>' : '')
+                + '</div></div>'
                 + '</div>'
                 + '<div class="otm-dup-actions">'
                 + '<button type="button" class="btn btn-outline-secondary" '

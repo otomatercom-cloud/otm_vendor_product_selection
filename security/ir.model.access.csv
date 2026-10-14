@@ -19,3 +19,5 @@ access_otm_batch_portal,otm.vendor.upload.batch portal,model_otm_vendor_upload_b
 access_otm_selection_wizard,otm.vendor.selection.wizard,model_otm_vendor_selection_wizard,group_otm_vendor_manager,1,1,1,1
 access_otm_rejection_wizard,otm.vendor.rejection.wizard,model_otm_vendor_rejection_wizard,group_otm_vendor_manager,1,1,1,1
 access_otm_portal_user_wizard_admin,otm.vendor.portal.user.wizard admin,model_otm_vendor_portal_user_wizard,group_otm_vendor_admin,1,1,1,1
+access_otm_design_match_user,otm.vendor.design.match user,model_otm_vendor_design_match,group_otm_vendor_user,1,0,0,0
+access_otm_design_match_manager,otm.vendor.design.match manager,model_otm_vendor_design_match,group_otm_vendor_manager,1,1,1,1

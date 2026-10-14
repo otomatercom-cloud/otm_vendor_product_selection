@@ -26,9 +26,8 @@ class OtmVendorProductTag(models.Model):
     name = fields.Char(required=True)
     color = fields.Integer(string='Color Index')
 
-    _sql_constraints = [
-        ('name_uniq', 'unique(name)', 'Tag name must be unique.'),
-    ]
+    _name_uniq = models.Constraint(
+        'unique(name)', 'Tag name must be unique.')
 
 
 class OtmVendorProductSubmission(models.Model):
@@ -164,10 +163,9 @@ class OtmVendorProductSubmission(models.Model):
         'product.template', string='Odoo Product', readonly=True, copy=False,
         index=True)
 
-    _sql_constraints = [
-        ('vendor_sku_uniq', 'unique(vendor_id, vendor_sku)',
-         'This vendor already uses this SKU on another submission.'),
-    ]
+    _vendor_sku_uniq = models.Constraint(
+        'unique(vendor_id, vendor_sku)',
+        'This vendor already uses this SKU on another submission.')
 
     # ------------------------------------------------------------------
     # Computes / constraints

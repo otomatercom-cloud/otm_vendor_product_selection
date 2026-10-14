@@ -13,13 +13,15 @@ Fashion/dress retail vendor submission platform:
 * Vendor portal (/my/vendor): dashboard, product submission, bulk image upload
 * Hierarchical multi-category product categorisation
 * Two-level duplicate image detection (SHA-256 exact + perceptual hash)
+* Design-level match % (AI image embedding): same design from another
+  angle / worn by another person, across all vendors
 * Procurement Manager duplicate review screen
 * Submission workflow: Draft -> Submitted -> Under Review -> Selected/Rejected
 * Mobile-first Procurement Manager review interface (/purchase/product-review)
 * Conversion of selected submissions into product.template records
 * Vendor e-mail notifications on every status change
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Purchases',
     'author': 'Otomater',
     'company': 'Otomater',
@@ -51,6 +53,7 @@ Fashion/dress retail vendor submission platform:
         # 3. Backend views (actions defined before the menus that point at them)
         'views/vendor_category_views.xml',
         'views/vendor_image_views.xml',
+        'views/design_match_views.xml',
         'views/upload_batch_views.xml',
         'wizards/selection_wizard_views.xml',
         'wizards/rejection_wizard_views.xml',

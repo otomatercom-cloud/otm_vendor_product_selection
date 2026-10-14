@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_otm_design_match_list" model="ir.ui.view">
+        <field name="name">otm.vendor.design.match.list</field>
+        <field name="model">otm.vendor.design.match</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" default_order="score desc">
+                <field name="image_id"/>
+                <field name="vendor_id"/>
+                <field name="submission_id"/>
+                <field name="score" decoration-danger="score &gt;= 88" decoration-warning="score &lt; 88"/>
+                <field name="match_image_128" widget="image" options="{'size': [64, 64]}"/>
+                <field name="match_vendor_id"/>
+                <field name="same_vendor"/>
+                <field name="match_submission_id"/>
+                <field name="match_state" widget="badge"/>
+                <field name="match_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_otm_design_match_search" model="ir.ui.view">
+        <field name="name">otm.vendor.design.match.search</field>
+        <field name="model">otm.vendor.design.match</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="vendor_id"/>
+                <field name="match_vendor_id"/>
+                <field name="submission_id"/>
+                <field name="match_submission_id"/>
+                <filter name="filter_strong" string="Strong (88%+)"
+                        domain="[('score', '&gt;=', 88)]"/>
+                <filter name="filter_same_vendor" string="Same Vendor"
+                        domain="[('same_vendor', '=', True)]"/>
+                <filter name="filter_prev_rejected" string="Earlier Rejected"
+                        domain="[('match_state', '=', 'rejected')]"/>
+                <filter name="filter_prev_selected" string="Earlier Selected"
+                        domain="[('match_state', '=', 'selected')]"/>
+                <group>
+                    <filter name="group_vendor" string="Vendor"
+                            context="{'group_by': 'vendor_id'}"/>
+                    <filter name="group_match_vendor" string="Earlier Vendor"
+                            context="{'group_by': 'match_vendor_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_otm_design_match" model="ir.actions.act_window">
+        <field name="name">Design Matches</field>
+        <field name="res_model">otm.vendor.design.match</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No design matches yet</p>
+            <p>Images that look like the same design as an earlier upload (any angle, any person wearing it) are listed here with a match percentage.</p>
+        </field>
+    </record>
+
+    <record id="action_otm_rebuild_design_index" model="ir.actions.server">
+        <field name="name">Rebuild Design Index</field>
+        <field name="model_id" ref="model_otm_vendor_product_image"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_rebuild_design_index()</field>
+    </record>
+</odoo>

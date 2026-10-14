@@ -11,5 +11,14 @@
             <field name="interval_type">minutes</field>
             <field name="active" eval="True"/>
         </record>
+        <record id="ir_cron_process_design_matches" model="ir.cron">
+            <field name="name">Vendor Products: index images for design matching</field>
+            <field name="model_id" ref="model_otm_vendor_design_service"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_process_embeddings()</field>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
     </data>
 </odoo>

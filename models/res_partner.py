@@ -35,10 +35,8 @@ class ResPartner(models.Model):
     otm_submission_count = fields.Integer(
         compute='_compute_otm_submission_count', string='Submission Count')
 
-    _sql_constraints = [
-        ('otm_vendor_code_uniq', 'unique(otm_vendor_code)',
-         'The vendor code must be unique.'),
-    ]
+    _otm_vendor_code_uniq = models.Constraint(
+        'unique(otm_vendor_code)', 'The vendor code must be unique.')
 
     def _compute_otm_portal_user_ids(self):
         portal_group = self.env.ref('base.group_portal', raise_if_not_found=False)

@@ -58,6 +58,12 @@ PARAM_LOOSE = 'otm_vendor_product_selection.duplicate_similar_distance'
 PARAM_MAX_SIZE = 'otm_vendor_product_selection.max_upload_size_mb'
 PARAM_SYNC_LIMIT = 'otm_vendor_product_selection.sync_processing_limit'
 
+def _pixels(img):
+    """Flat pixel sequence; ``getdata`` is deprecated in Pillow >= 12."""
+    getter = getattr(img, 'get_flattened_data', None)
+    return getter() if getter else img.getdata()
+
+
 ALLOWED_EXTENSIONS = ('jpg', 'jpeg', 'png', 'webp')
 ALLOWED_MIMETYPES = ('image/jpeg', 'image/png', 'image/webp')
 
@@ -138,7 +144,7 @@ class OtmVendorDuplicateService(models.AbstractModel):
     def _pillow_dhash(gray_img):
         """Pure-Pillow 64-bit difference hash (row-wise gradient, 9x8)."""
         small = gray_img.resize((9, 8), PILImage.LANCZOS)
-        pixels = list(small.getdata())
+        pixels = list(_pixels(small))
         bits = 0
         for row in range(8):
             for col in range(8):
@@ -151,7 +157,7 @@ class OtmVendorDuplicateService(models.AbstractModel):
     def _pillow_ahash(gray_img):
         """Pure-Pillow 64-bit average hash (8x8 mean threshold)."""
         small = gray_img.resize((8, 8), PILImage.LANCZOS)
-        pixels = list(small.getdata())
+        pixels = list(_pixels(small))
         avg = sum(pixels) / 64.0
         bits = 0
         for px in pixels:
@@ -208,6 +214,11 @@ class OtmVendorDuplicateService(models.AbstractModel):
                 if image.batch_id:
                     image.batch_id._log_error(
                         'Image %s (%s): %s' % (image.id, image.name, exc))
+        # Design-level matching (other angle / worn by a model). Only runs
+        # when the model file is already present, so a web request never
+        # waits for a download; otherwise the cron handles it.
+        self.env['otm.vendor.design.service'].process_images(
+            images, allow_download=False)
         # roll batch states forward
         for batch in images.batch_id:
             pending = batch.image_ids.filtered(

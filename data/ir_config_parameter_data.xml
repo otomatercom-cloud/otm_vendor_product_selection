@@ -11,6 +11,16 @@
             <field name="key">otm_vendor_product_selection.duplicate_similar_distance</field>
             <field name="value">12</field>
         </record>
+        <!-- Design-level (AI) match percentages. >= flag -> Possible
+             Duplicate, >= similar -> Similar. Tune on real data. -->
+        <record id="param_design_flag_score" model="ir.config_parameter">
+            <field name="key">otm_vendor_product_selection.design_flag_score</field>
+            <field name="value">88</field>
+        </record>
+        <record id="param_design_similar_score" model="ir.config_parameter">
+            <field name="key">otm_vendor_product_selection.design_similar_score</field>
+            <field name="value">80</field>
+        </record>
         <!-- Max size per uploaded image, in MB -->
         <record id="param_max_upload_size_mb" model="ir.config_parameter">
             <field name="key">otm_vendor_product_selection.max_upload_size_mb</field>

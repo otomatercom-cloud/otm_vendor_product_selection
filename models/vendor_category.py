@@ -38,9 +38,8 @@ class OtmVendorProductCategory(models.Model):
     submission_count = fields.Integer(
         string='Submissions', compute='_compute_submission_count')
 
-    _sql_constraints = [
-        ('code_uniq', 'unique(code)', 'The category code must be unique.'),
-    ]
+    _code_uniq = models.Constraint(
+        'unique(code)', 'The category code must be unique.')
 
     @api.depends('name', 'parent_id.complete_name')
     def _compute_complete_name(self):

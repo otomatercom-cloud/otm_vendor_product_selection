@@ -6,3 +6,5 @@ from . import upload_batch
 from . import vendor_image
 from . import vendor_submission
 from . import duplicate_service
+from . import design_match
+from . import design_service

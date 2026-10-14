@@ -95,6 +95,18 @@
               action="action_otm_vendor_image_review"
               sequence="3"/>
 
+    <menuitem id="menu_otm_duplicates_design"
+              name="Design Matches"
+              parent="menu_otm_duplicates"
+              action="action_otm_design_match"
+              sequence="4"/>
+    <menuitem id="menu_otm_duplicates_rebuild"
+              name="Rebuild Design Index"
+              parent="menu_otm_duplicates"
+              action="action_otm_rebuild_design_index"
+              sequence="9"
+              groups="otm_vendor_product_selection.group_otm_vendor_admin"/>
+
     <menuitem id="menu_otm_vendors"
               name="Vendors"
               parent="menu_otm_vendor_root"
