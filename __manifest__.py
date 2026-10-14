@@ -21,7 +21,7 @@ Fashion/dress retail vendor submission platform:
 * Conversion of selected submissions into product.template records
 * Vendor e-mail notifications on every status change
 """,
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Purchases',
     'author': 'Otomater',
     'company': 'Otomater',

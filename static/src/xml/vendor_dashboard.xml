@@ -92,6 +92,21 @@
                             <i class="fa fa-exclamation-triangle me-1"/>Possible Duplicate
                         </span>
                     </div>
+                    <div t-if="rec.dup_info" t-attf-class="o_otm_dupbox o_otm_dupbox_{{ rec.dup_info.kind }}">
+                        <img class="o_otm_dupbox_img" t-att-src="this.dupThumb(rec.dup_info.match_image_id)"/>
+                        <div class="o_otm_dupbox_txt">
+                            <div class="o_otm_dupbox_top">
+                                <strong><t t-esc="rec.dup_info.score"/>% match</strong>
+                                <span class="o_otm_dupbox_kind" t-esc="this.kindLabel(rec.dup_info.kind)"/>
+                            </div>
+                            <div class="o_otm_dupbox_sub">
+                                Looks like <b t-esc="rec.dup_info.match_product"/>
+                                from <b t-esc="rec.dup_info.match_vendor"/>
+                                (<t t-esc="rec.dup_info.same_vendor ? 'same vendor' : 'other vendor'"/>)
+                                <t t-if="rec.dup_info.match_state"> &#8226; earlier: <b t-esc="rec.dup_info.match_state"/></t>
+                            </div>
+                        </div>
+                    </div>
                     <div class="o_otm_pcard_body">
                         <div class="o_otm_pcard_name" t-esc="rec.name"/>
                         <div class="o_otm_pcard_meta">
@@ -139,6 +154,7 @@
                         <span t-attf-class="o_otm_dup_type_badge o_otm_dt_{{ img.duplicate_status }}">
                             <t t-esc="this.dupLabel(img.duplicate_status)"/>
                         </span>
+                        <span class="o_otm_dup_kind" t-esc="this.kindLabel(img.match_kind)"/>
                         <span class="o_otm_dup_score">
                             <t t-esc="Math.round(img.similarity_score || 0)"/>% match
                         </span>
@@ -149,8 +165,8 @@
                             <div class="o_otm_dup_vendor">
                                 <strong t-esc="img.vendor_id ? img.vendor_id[1] : 'Unknown vendor'"/>
                                 <div t-if="this.vendorInfo(img.vendor_id)" class="small text-muted">
-                                    <t t-esc="this.vendorInfo(img.vendor_id).otm_vendor_code"/><br/>
-                                    <t t-esc="this.vendorInfo(img.vendor_id).email"/>
+                                    <t t-esc="this.vendorInfo(img.vendor_id).otm_vendor_code || ''"/><br/>
+                                    <t t-esc="this.vendorInfo(img.vendor_id).email || ''"/>
                                 </div>
                                 <div class="small text-muted" t-esc="img.submission_id ? img.submission_id[1] : ''"/>
                             </div>
@@ -162,12 +178,16 @@
                             <div class="o_otm_dup_vendor">
                                 <strong t-esc="img.duplicate_vendor_id ? img.duplicate_vendor_id[1] : 'Unknown vendor'"/>
                                 <div t-if="this.vendorInfo(img.duplicate_vendor_id)" class="small text-muted">
-                                    <t t-esc="this.vendorInfo(img.duplicate_vendor_id).otm_vendor_code"/><br/>
-                                    <t t-esc="this.vendorInfo(img.duplicate_vendor_id).email"/>
+                                    <t t-esc="this.vendorInfo(img.duplicate_vendor_id).otm_vendor_code || ''"/><br/>
+                                    <t t-esc="this.vendorInfo(img.duplicate_vendor_id).email || ''"/>
                                 </div>
                                 <div class="small text-muted" t-esc="img.duplicate_submission_id ? img.duplicate_submission_id[1] : ''"/>
                             </div>
-                            <span class="o_otm_dup_side_label">Already in Catalogue</span>
+                            <span class="o_otm_dup_side_label">
+                                Already in Catalogue &#8226;
+                                <t t-esc="this.sameVendor(img) ? 'same vendor' : 'other vendor'"/>
+                                <t t-if="img.duplicate_submission_state"> &#8226; <t t-esc="this.stateLabel(img.duplicate_submission_state)"/></t>
+                            </span>
                         </div>
                     </div>
                     <div class="o_otm_dup_actions">

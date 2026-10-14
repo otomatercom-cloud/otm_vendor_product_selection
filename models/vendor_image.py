@@ -85,6 +85,12 @@ class OtmVendorProductImage(models.Model):
     ], string='Processing', default='pending', index=True, copy=False,
         help='Guards against the same upload being analysed twice.')
     process_error = fields.Text(readonly=True, copy=False)
+    match_kind = fields.Selection([
+        ('same_photo', 'Same photo (re-sent / resized)'),
+        ('same_design', 'Same design (different angle / style / person)'),
+    ], string='Match Type', copy=False, readonly=True,
+        help='Why this image was flagged: the identical photograph, or the '
+             'same dress shown from another angle / worn by someone else.')
 
     # --- design-level (AI embedding) matching -------------------------
     design_embedding = fields.Binary(
@@ -111,6 +117,9 @@ class OtmVendorProductImage(models.Model):
         related='duplicate_image_id.vendor_id', string='Existing Vendor')
     duplicate_submission_id = fields.Many2one(
         related='duplicate_image_id.submission_id', string='Existing Product')
+    duplicate_submission_state = fields.Selection(
+        related='duplicate_image_id.submission_id.state',
+        string='Existing Product Status')
     duplicate_upload_date = fields.Datetime(
         related='duplicate_image_id.create_date', string='Existing Upload Date')
 
@@ -172,6 +181,7 @@ class OtmVendorProductImage(models.Model):
             'dhash_c3': False, 'dhash_c4': False,
             'duplicate_status': 'pending', 'process_state': 'pending',
             'design_embedding': False, 'embed_state': 'pending',
+            'match_kind': False,
             'design_score': 0.0,
         })
 
@@ -199,7 +209,7 @@ class OtmVendorProductImage(models.Model):
     def action_not_duplicate(self):
         self._check_review_rights()
         self.write({'duplicate_status': 'new', 'duplicate_image_id': False,
-                    'similarity_score': 0.0})
+                    'similarity_score': 0.0, 'match_kind': False})
         self._otm_log_review(self.env._('marked as NOT a duplicate'))
 
     def action_keep_both(self):

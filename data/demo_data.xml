@@ -94,6 +94,7 @@
         </record>
 
         <record id="img_red_b" model="otm.vendor.product.image">
+            <field name="match_kind">same_design</field>
             <field name="name">demo_red_floral_worn.jpg</field>
             <field name="submission_id" ref="demo_sub_red_b"/>
             <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_red_floral_worn.jpg"/>
@@ -107,6 +108,7 @@
         </record>
 
         <record id="img_red_c" model="otm.vendor.product.image">
+            <field name="match_kind">same_design</field>
             <field name="name">demo_red_floral_angle.jpg</field>
             <field name="submission_id" ref="demo_sub_red_c"/>
             <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_red_floral_angle.jpg"/>
@@ -130,6 +132,7 @@
         </record>
 
         <record id="img_blue_b" model="otm.vendor.product.image">
+            <field name="match_kind">same_design</field>
             <field name="name">demo_blue_stripe_worn.jpg</field>
             <field name="submission_id" ref="demo_sub_blue_b"/>
             <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_blue_stripe_worn.jpg"/>

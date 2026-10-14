@@ -220,6 +220,7 @@ class OtmProductReviewController(http.Controller):
                 'similarity_score': img.similarity_score,
                 'duplicate_type': img.duplicate_status,
                 'design_score': img.design_score,
+                'match_kind': img.match_kind or 'same_photo',
                 'same_vendor': bool(img.vendor_id
                                     and img.vendor_id == existing.vendor_id),
                 'existing_state': dict(

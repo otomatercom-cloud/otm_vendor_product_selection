@@ -117,6 +117,11 @@ class OtmVendorProductSubmission(models.Model):
         store=True, index=True,
         help='True when at least one image is flagged as an exact or '
              'possible duplicate awaiting review.')
+    dup_info = fields.Json(
+        string='Duplicate Summary', compute='_compute_dup_info',
+        groups='otm_vendor_product_selection.group_otm_vendor_user',
+        help='Best duplicate / look-alike match for the dashboard card. '
+             'Internal users only: vendors must never learn about it.')
     has_confirmed_duplicate = fields.Boolean(
         string='Has Confirmed Duplicate', compute='_compute_image_stats',
         store=True, index=True,
@@ -170,6 +175,34 @@ class OtmVendorProductSubmission(models.Model):
     # ------------------------------------------------------------------
     # Computes / constraints
     # ------------------------------------------------------------------
+    def _compute_dup_info(self):
+        state_labels = dict(self._fields['state']._description_selection(
+            self.env))
+        flagged_states = ('exact_duplicate', 'possible_duplicate', 'similar')
+        for submission in self:
+            flagged = submission.image_ids.filtered(
+                lambda i: i.duplicate_status in flagged_states
+                and i.duplicate_image_id)
+            if not flagged:
+                submission.dup_info = False
+                continue
+            best = max(flagged, key=lambda i: i.similarity_score)
+            other = best.duplicate_image_id
+            other_sub = other.submission_id
+            submission.dup_info = {
+                'score': round(best.similarity_score),
+                'kind': best.match_kind or 'same_photo',
+                'count': len(flagged),
+                'same_vendor': bool(
+                    best.vendor_id and best.vendor_id == other.vendor_id),
+                'match_image_id': other.id,
+                'match_vendor': other.vendor_id.display_name or '',
+                'match_product': other_sub.display_name or '',
+                'match_state': state_labels.get(other_sub.state, '')
+                if other_sub else '',
+                'match_state_code': other_sub.state if other_sub else '',
+            }
+
     @api.depends('image_ids', 'image_ids.duplicate_status')
     def _compute_image_stats(self):
         for submission in self:

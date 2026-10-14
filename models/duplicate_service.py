@@ -240,6 +240,7 @@ class OtmVendorDuplicateService(models.AbstractModel):
             if exact:
                 return {
                     'duplicate_status': 'exact_duplicate',
+                    'match_kind': 'same_photo',
                     'duplicate_image_id': exact.id,
                     'similarity_score': 100.0,
                 }
@@ -266,12 +267,14 @@ class OtmVendorDuplicateService(models.AbstractModel):
             if best and best_dist <= thresholds['strict']:
                 return {
                     'duplicate_status': 'possible_duplicate',
+                    'match_kind': 'same_photo',
                     'duplicate_image_id': best.id,
                     'similarity_score': round((64 - best_dist) / 64.0 * 100, 1),
                 }
             if best and best_dist <= thresholds['loose']:
                 return {
                     'duplicate_status': 'similar',
+                    'match_kind': 'same_photo',
                     'duplicate_image_id': best.id,
                     'similarity_score': round((64 - best_dist) / 64.0 * 100, 1),
                 }

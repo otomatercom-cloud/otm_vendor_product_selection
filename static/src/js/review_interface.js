@@ -627,6 +627,8 @@
                 + escapeHtml(rec.new_vendor) + '<br/>'
                 + escapeHtml(rec.new_product) + '</div></div>'
                 + '<div class="otm-dup-vs">VS<br/><span class="small">'
+                + (rec.match_kind === 'same_design' ? 'Same design' : 'Same photo')
+                + '<br/>'
                 + Math.round(rec.similarity_score || 0) + '%</span></div>'
                 + '<div><img class="otm-dup-existing" src="' + rec.existing_thumb
                 + '" data-full="' + rec.existing_url + '" alt=""/>'

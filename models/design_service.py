@@ -330,7 +330,8 @@ class OtmVendorDesignService(models.AbstractModel):
             status = 'similar'
         else:
             return {}
-        return {'duplicate_status': status, 'duplicate_image_id': best_id,
+        return {'duplicate_status': status, 'match_kind': 'same_design',
+                'duplicate_image_id': best_id,
                 'similarity_score': pct}
 
     # ------------------------------------------------------------------

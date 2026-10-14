@@ -22,6 +22,11 @@ const DUP_LABELS = {
     similar: "Similar Image",
 };
 
+const KIND_LABELS = {
+    same_photo: "Same photo",
+    same_design: "Same design, different angle / style",
+};
+
 const ACTIONABLE_STATES = ["submitted", "under_review", "duplicate_review"];
 
 export class OtmVendorDashboard extends Component {
@@ -93,7 +98,7 @@ export class OtmVendorDashboard extends Component {
                     "otm.vendor.product.submission", domain,
                     ["name", "vendor_id", "vendor_sku", "purchase_price",
                      "currency_id", "state", "has_duplicate_flag",
-                     "has_confirmed_duplicate",
+                     "has_confirmed_duplicate", "dup_info",
                      "main_image_id", "primary_category_id"],
                     { order: "create_date desc", limit: 120 });
             }
@@ -109,7 +114,8 @@ export class OtmVendorDashboard extends Component {
               ["exact_duplicate", "possible_duplicate", "similar"]]],
             ["vendor_id", "submission_id", "similarity_score",
              "duplicate_status", "duplicate_image_id", "duplicate_vendor_id",
-             "duplicate_submission_id", "duplicate_upload_date", "create_date"],
+             "duplicate_submission_id", "duplicate_upload_date", "create_date",
+             "match_kind", "duplicate_submission_state"],
             { order: "create_date desc", limit: 120 });
 
         const vendorIds = new Set();
@@ -142,6 +148,19 @@ export class OtmVendorDashboard extends Component {
 
     dupLabel(status) {
         return DUP_LABELS[status] || status;
+    }
+
+    kindLabel(kind) {
+        return KIND_LABELS[kind || "same_photo"] || KIND_LABELS.same_photo;
+    }
+
+    dupThumb(imageId) {
+        return `/web/image/otm.vendor.product.image/${imageId}/image_128`;
+    }
+
+    sameVendor(img) {
+        return !!(img.vendor_id && img.duplicate_vendor_id
+            && img.vendor_id[0] === img.duplicate_vendor_id[0]);
     }
 
     isActionable(state) {
