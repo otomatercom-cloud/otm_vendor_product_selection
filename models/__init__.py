@@ -8,3 +8,4 @@ from . import vendor_submission
 from . import duplicate_service
 from . import design_match
 from . import design_service
+from . import demo_loader

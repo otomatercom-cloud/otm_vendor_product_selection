@@ -107,4 +107,19 @@
               parent="menu_otm_config"
               action="action_otm_vendor_image_all"
               sequence="1"/>
+
+    <menuitem id="menu_otm_config_demo"
+              name="Demo Data"
+              parent="menu_otm_config"
+              sequence="99"/>
+    <menuitem id="menu_otm_config_demo_load"
+              name="Load Demo Data"
+              parent="menu_otm_config_demo"
+              action="action_otm_load_demo"
+              sequence="1"/>
+    <menuitem id="menu_otm_config_demo_remove"
+              name="Remove Demo Data"
+              parent="menu_otm_config_demo"
+              action="action_otm_remove_demo"
+              sequence="2"/>
 </odoo>
