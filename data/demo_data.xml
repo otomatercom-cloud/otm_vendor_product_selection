@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Otomater. See LICENSE file for full copyright and licensing details. -->
+<!-- DEMO: same dress sent again from another angle / worn by a model, by the
+     same vendor and by another vendor. Design-match records are pre-filled so
+     the screens can be shown without the AI model installed. After the model
+     is installed, Duplicate Management > Rebuild Design Index recomputes them. -->
+<odoo>
+    <data noupdate="1">
+        <record id="demo_vendor_rose" model="res.partner">
+            <field name="name">Rose Textiles (Demo)</field>
+            <field name="is_otm_vendor" eval="True"/>
+            <field name="is_company" eval="True"/>
+        </record>
+        <record id="demo_vendor_kerala" model="res.partner">
+            <field name="name">Kerala Fashions (Demo)</field>
+            <field name="is_otm_vendor" eval="True"/>
+            <field name="is_company" eval="True"/>
+        </record>
+
+        <record id="demo_sub_red_a" model="otm.vendor.product.submission">
+            <field name="name">Red Floral Kurti</field>
+            <field name="vendor_id" ref="demo_vendor_rose"/>
+            <field name="state">selected</field>
+            <field name="color">Red</field>
+            <field name="material">Cotton</field>
+            <field name="available_sizes">S, M, L, XL</field>
+            <field name="purchase_price">450</field>
+            <field name="mrp">899</field>
+        </record>
+
+        <record id="demo_sub_red_b" model="otm.vendor.product.submission">
+            <field name="name">Red Floral Kurti - Festive</field>
+            <field name="vendor_id" ref="demo_vendor_kerala"/>
+            <field name="state">under_review</field>
+            <field name="color">Red</field>
+            <field name="material">Cotton</field>
+            <field name="available_sizes">S, M, L, XL</field>
+            <field name="purchase_price">450</field>
+            <field name="mrp">899</field>
+        </record>
+
+        <record id="demo_sub_red_c" model="otm.vendor.product.submission">
+            <field name="name">Red Floral Kurti (New Batch)</field>
+            <field name="vendor_id" ref="demo_vendor_rose"/>
+            <field name="state">duplicate_review</field>
+            <field name="color">Red</field>
+            <field name="material">Cotton</field>
+            <field name="available_sizes">S, M, L, XL</field>
+            <field name="purchase_price">450</field>
+            <field name="mrp">899</field>
+        </record>
+
+        <record id="demo_sub_blue_a" model="otm.vendor.product.submission">
+            <field name="name">Blue Striped Top</field>
+            <field name="vendor_id" ref="demo_vendor_kerala"/>
+            <field name="state">rejected</field>
+            <field name="color">Blue</field>
+            <field name="material">Cotton</field>
+            <field name="available_sizes">S, M, L, XL</field>
+            <field name="purchase_price">450</field>
+            <field name="mrp">899</field>
+        </record>
+
+        <record id="demo_sub_blue_b" model="otm.vendor.product.submission">
+            <field name="name">Blue Stripe Casual Top</field>
+            <field name="vendor_id" ref="demo_vendor_rose"/>
+            <field name="state">submitted</field>
+            <field name="color">Blue</field>
+            <field name="material">Cotton</field>
+            <field name="available_sizes">S, M, L, XL</field>
+            <field name="purchase_price">450</field>
+            <field name="mrp">899</field>
+        </record>
+
+        <record id="demo_sub_green_a" model="otm.vendor.product.submission">
+            <field name="name">Green Plain Kurti</field>
+            <field name="vendor_id" ref="demo_vendor_rose"/>
+            <field name="state">submitted</field>
+            <field name="color">Green</field>
+            <field name="material">Cotton</field>
+            <field name="available_sizes">S, M, L, XL</field>
+            <field name="purchase_price">450</field>
+            <field name="mrp">899</field>
+        </record>
+
+        <record id="img_red_a" model="otm.vendor.product.image">
+            <field name="name">demo_red_floral_front.jpg</field>
+            <field name="submission_id" ref="demo_sub_red_a"/>
+            <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_red_floral_front.jpg"/>
+            <field name="view_type">front</field>
+            <field name="process_state">done</field>
+            <field name="embed_state">done</field>
+            <field name="duplicate_status">new</field>
+        </record>
+
+        <record id="img_red_b" model="otm.vendor.product.image">
+            <field name="name">demo_red_floral_worn.jpg</field>
+            <field name="submission_id" ref="demo_sub_red_b"/>
+            <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_red_floral_worn.jpg"/>
+            <field name="view_type">other</field>
+            <field name="process_state">done</field>
+            <field name="embed_state">done</field>
+            <field name="duplicate_status">possible_duplicate</field>
+            <field name="duplicate_image_id" ref="img_red_a"/>
+            <field name="similarity_score">93.4</field>
+            <field name="design_score">93.4</field>
+        </record>
+
+        <record id="img_red_c" model="otm.vendor.product.image">
+            <field name="name">demo_red_floral_angle.jpg</field>
+            <field name="submission_id" ref="demo_sub_red_c"/>
+            <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_red_floral_angle.jpg"/>
+            <field name="view_type">side</field>
+            <field name="process_state">done</field>
+            <field name="embed_state">done</field>
+            <field name="duplicate_status">possible_duplicate</field>
+            <field name="duplicate_image_id" ref="img_red_a"/>
+            <field name="similarity_score">96.2</field>
+            <field name="design_score">96.2</field>
+        </record>
+
+        <record id="img_blue_a" model="otm.vendor.product.image">
+            <field name="name">demo_blue_stripe_front.jpg</field>
+            <field name="submission_id" ref="demo_sub_blue_a"/>
+            <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_blue_stripe_front.jpg"/>
+            <field name="view_type">front</field>
+            <field name="process_state">done</field>
+            <field name="embed_state">done</field>
+            <field name="duplicate_status">new</field>
+        </record>
+
+        <record id="img_blue_b" model="otm.vendor.product.image">
+            <field name="name">demo_blue_stripe_worn.jpg</field>
+            <field name="submission_id" ref="demo_sub_blue_b"/>
+            <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_blue_stripe_worn.jpg"/>
+            <field name="view_type">other</field>
+            <field name="process_state">done</field>
+            <field name="embed_state">done</field>
+            <field name="duplicate_status">possible_duplicate</field>
+            <field name="duplicate_image_id" ref="img_blue_a"/>
+            <field name="similarity_score">90.1</field>
+            <field name="design_score">90.1</field>
+        </record>
+
+        <record id="img_green_a" model="otm.vendor.product.image">
+            <field name="name">demo_green_plain.jpg</field>
+            <field name="submission_id" ref="demo_sub_green_a"/>
+            <field name="image_1920" type="base64" file="otm_vendor_product_selection/static/demo/demo_green_plain.jpg"/>
+            <field name="view_type">front</field>
+            <field name="process_state">done</field>
+            <field name="embed_state">done</field>
+            <field name="duplicate_status">new</field>
+        </record>
+
+        <record id="demo_match_red_b_red_a" model="otm.vendor.design.match">
+            <field name="image_id" ref="img_red_b"/>
+            <field name="match_image_id" ref="img_red_a"/>
+            <field name="score">93.4</field>
+        </record>
+
+        <record id="demo_match_red_c_red_a" model="otm.vendor.design.match">
+            <field name="image_id" ref="img_red_c"/>
+            <field name="match_image_id" ref="img_red_a"/>
+            <field name="score">96.2</field>
+        </record>
+
+        <record id="demo_match_red_c_red_b" model="otm.vendor.design.match">
+            <field name="image_id" ref="img_red_c"/>
+            <field name="match_image_id" ref="img_red_b"/>
+            <field name="score">91.0</field>
+        </record>
+
+        <record id="demo_match_blue_b_blue_a" model="otm.vendor.design.match">
+            <field name="image_id" ref="img_blue_b"/>
+            <field name="match_image_id" ref="img_blue_a"/>
+            <field name="score">90.1</field>
+        </record>
+
+    </data>
+</odoo>
